@@ -1,0 +1,13 @@
+{
+  "task_id": "footing-settlement-verification",
+  "mcp_transport": "streamable-http",
+  "status": "completed_and_synchronized",
+  "verified_constraints_count": 4,
+  "deliverables_registered": [
+    "app/output/footing_settlement_verification_report.md",
+    "app/output/footing_settlement_verification_memo.docx",
+    "app/output/footing_settlement_verification_calculations.xlsx",
+    "app/output/footing_settlement_verification_summary.json"
+  ],
+  "pe_signoff_status": "APPROVED (G=1)"
+}

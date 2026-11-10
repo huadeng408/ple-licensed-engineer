@@ -1,0 +1,73 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "data-hall-mep-routing-offset",
+  "discipline": "Mechanical / Electrical / Plumbing (MEP) BIM Routing",
+  "grading_mode": "checks",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 1.0,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/app/files/dc_model__hall_seed005_d100__mep_routing/output/solution.py"
+      ],
+      "governing_codes": "ASHRAE TC 9.9, NEC 2023 Art. 645, SMACNA HVAC Duct Construction"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "Offset Corridor Alignment (d=100 mm)",
+          "requirement": "Exact 100.0 mm shift",
+          "computed": "100.0 mm",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Minimum MEP-to-Structural Clearance",
+          "requirement": ">= 150.0 mm",
+          "computed": "175.0 mm",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Chilled Water Header Velocity",
+          "requirement": "<= 2.40 m/s",
+          "computed": "1.88 m/s",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Expansion Loop Thermal Stress",
+          "requirement": "<= 138.0 MPa (ASME B31.9)",
+          "computed": "94.2 MPa",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "3D Bounding-Box Clash Count",
+          "requirement": "== 0 clashes",
+          "computed": "0 clashes",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "app/files/dc_model__hall_seed005_d100__mep_routing/output/solution.py"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "landscape-sheet-revision",
+  "discipline": "Civil & Landscape Site Engineering",
+  "grading_mode": "rubric",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 0.7,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/app/files/"
+      ],
+      "governing_codes": "Local Municipal Stormwater Manual, ADA 2010 Standards, ASLA Planting & Grading Code"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "100-Year Bioretention Ponding Freeboard",
+          "requirement": ">= 305.0 mm (12.0 in)",
+          "computed": "355.6 mm (14.0 in)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Intersection Sight-Triangle Plant Height",
+          "requirement": "<= 610.0 mm (24.0 in)",
+          "computed": "450.0 mm (17.7 in)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "MAWA Water Budget Compliance Ratio",
+          "requirement": "ETWU <= MAWA (Ratio <= 1.00)",
+          "computed": "0.78",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "ADA Accessible Path Cross-Slope",
+          "requirement": "<= 2.00%",
+          "computed": "1.50%",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "app/files/landscape_sheet_revision_L101.pdf",
+        "app/files/landscape_revision_memo.docx",
+        "app/files/landscape_revision_summary.md"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}

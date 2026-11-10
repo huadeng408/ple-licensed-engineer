@@ -3,6 +3,7 @@
   "discipline": "Geotechnical & Temporary Excavation Support Engineering",
   "codes": "FHWA-IF-99-015 (Ground Anchors and Anchored Systems), OSHA 29 CFR 1926 Subpart P, AISC 360-22",
   "gate_factor_G": 1,
+  "reward": 0.6,
   "hard_constraints": [
     {
       "parameter": "Tieback Anchor Tendon Lock-Off & Ultimate Capacity",

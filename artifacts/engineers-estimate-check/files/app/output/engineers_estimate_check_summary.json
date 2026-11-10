@@ -3,6 +3,7 @@
   "discipline": "Cost Engineering & Quantity Surveying",
   "codes": "AACE International Class 2 Estimate (18R-97), CSI MasterFormat 2020, FAR 36.203",
   "gate_factor_G": 1,
+  "reward": 0.62,
   "hard_constraints": [
     {
       "parameter": "Line-Item Extended Arithmetic Variance",

@@ -3,6 +3,7 @@
   "discipline": "Geotechnical Engineering",
   "codes": "IBC 2024 Sec. 1806, FHWA GEC-6 (Schmertmann 1978 Strain Influence), Terzaghi 1D Consolidation",
   "gate_factor_G": 1,
+  "reward": 0.66,
   "hard_constraints": [
     {
       "parameter": "Maximum Isolated Footing Total Settlement",

@@ -1,0 +1,73 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "pre-application-capacity-response",
+  "discipline": "Utility Distribution Planning & Hosting Capacity Engineering",
+  "grading_mode": "rubric",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 0.8,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "governing_codes": "FERC Order 2023 / SGIP Pre-Application Report, IEEE 1547-2018, CPUC Rule 21 / ICA Methodology"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "Thermal Feeder Hosting Capacity Limit",
+          "requirement": "I_load <= 90% of 600 A continuous rating",
+          "computed": "Verified (requires dedicated express feeder for >7.8 MVA)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Substation Transformer Bank N-1 Contingency Capacity",
+          "requirement": "MVA_total <= 45.0 MVA emergency rating",
+          "computed": "41.2 MVA",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Available Fault Current vs Equipment Rating",
+          "requirement": "I_sc,3ph = 18.4 kA <= 25.0 kA switchgear rating",
+          "computed": "18.4 kA",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Effective Grounding Ratio (X0/X1 and R0/X1)",
+          "requirement": "0 <= X0/X1 <= 3.0, R0/X1 <= 1.0",
+          "computed": "X0/X1 = 2.14, R0/X1 = 0.42",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "app/output/pre_application_capacity_response_report.md",
+        "app/output/pre_application_capacity_response_memo.docx",
+        "app/output/pre_application_capacity_response_calculations.xlsx",
+        "app/output/pre_application_capacity_response_summary.json",
+        "app/tools/.apps_data/mcp_state_snapshot.json"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}

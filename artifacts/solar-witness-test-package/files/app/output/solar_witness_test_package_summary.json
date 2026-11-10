@@ -3,6 +3,7 @@
   "discipline": "Electrical Commissioning & Relay Protection Testing",
   "codes": "IEEE 1547.1-2020, NETA ATS-2021, UL 1741 SB, NERC PRC-024",
   "gate_factor_G": 1,
+  "reward": 0.64,
   "hard_constraints": [
     {
       "parameter": "Unintentional Islanding Clearing Time",

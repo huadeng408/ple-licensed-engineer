@@ -1,0 +1,73 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "les-mesh-resolution",
+  "discipline": "Computational Fluid Dynamics (Large Eddy Simulation / Wind Engineering)",
+  "grading_mode": "rubric",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 0.51,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "governing_codes": "ASME V&V 20-2009, Pope (2000) 80% Resolved TKE Criterion, AIJ/COST Action 732 Best Practice"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "Pope Resolved Turbulent Kinetic Energy Ratio (M)",
+          "requirement": "k_res / k_tot >= 0.80 (<= 20% SGS)",
+          "computed": "0.846 (15.4% SGS)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Near-Wall Dimensionless Distance (y+)",
+          "requirement": "y+ <= 1.0 (wall-resolved) or 30-150 (WMLES)",
+          "computed": "y+ = 0.82 (wake) / 42.0 (ground)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Grid Convergence Index (GCI_fine, Roache)",
+          "requirement": "GCI_21 <= 3.00%",
+          "computed": "1.64%",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Ratio of Filter Width to Taylor Microscale (Delta/lambda_T)",
+          "requirement": "<= 1.00 in shear layer",
+          "computed": "0.68",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "app/output/les_mesh_resolution_report.md",
+        "app/output/les_mesh_resolution_memo.docx",
+        "app/output/les_mesh_resolution_calculations.xlsx",
+        "app/output/les_mesh_resolution_summary.json",
+        "app/tools/.apps_data/mcp_state_snapshot.json"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}

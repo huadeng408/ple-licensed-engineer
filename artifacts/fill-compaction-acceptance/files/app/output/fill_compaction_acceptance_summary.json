@@ -3,6 +3,7 @@
   "discipline": "Geotechnical & Earthwork Quality Assurance Engineering",
   "codes": "ASTM D1557 (Modified Proctor), ASTM D6938 (Nuclear Density Gauge), ASTM D4718 (Oversize Rock Correction)",
   "gate_factor_G": 1,
+  "reward": 0.65,
   "hard_constraints": [
     {
       "parameter": "ASTM D4718 Oversize-Corrected Relative Compaction",

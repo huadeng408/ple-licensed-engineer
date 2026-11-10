@@ -1,0 +1,73 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "fill-compaction-acceptance",
+  "discipline": "Geotechnical & Earthwork Quality Assurance Engineering",
+  "grading_mode": "rubric",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 0.65,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "governing_codes": "ASTM D1557 (Modified Proctor), ASTM D6938 (Nuclear Density Gauge), ASTM D4718 (Oversize Rock Correction)"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "ASTM D4718 Oversize-Corrected Relative Compaction",
+          "requirement": ">= 95.0% Modified Proctor (structural pad)",
+          "computed": "Min 95.4% after re-roll of Lot 7 & 19",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Compaction Moisture Content Window",
+          "requirement": "-1.0% <= (w - w_opt) <= +2.0%",
+          "computed": "-0.6% to +1.7%",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Maximum Loose Lift Thickness",
+          "requirement": "<= 200.0 mm (8.0 in)",
+          "computed": "185.0 mm",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Proof-Roll Deflection / Pumping Under 80 kN Axle",
+          "requirement": "Zero pumping/rutting > 6 mm",
+          "computed": "2.5 mm max",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "app/output/fill_compaction_acceptance_report.md",
+        "app/output/fill_compaction_acceptance_memo.docx",
+        "app/output/fill_compaction_acceptance_calculations.xlsx",
+        "app/output/fill_compaction_acceptance_summary.json",
+        "app/tools/.apps_data/mcp_state_snapshot.json"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}

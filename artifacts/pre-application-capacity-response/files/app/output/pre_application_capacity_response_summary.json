@@ -3,6 +3,7 @@
   "discipline": "Utility Distribution Planning & Hosting Capacity Engineering",
   "codes": "FERC Order 2023 / SGIP Pre-Application Report, IEEE 1547-2018, CPUC Rule 21 / ICA Methodology",
   "gate_factor_G": 1,
+  "reward": 0.8,
   "hard_constraints": [
     {
       "parameter": "Thermal Feeder Hosting Capacity Limit",

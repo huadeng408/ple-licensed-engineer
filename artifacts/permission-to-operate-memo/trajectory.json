@@ -1,0 +1,73 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "permission-to-operate-memo",
+  "discipline": "Electrical Utility Interconnection & Commissioning (PTO)",
+  "grading_mode": "rubric",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 0.68,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "governing_codes": "IEEE 1547-2018, IEEE 1547.1-2020, NERC FAC-002, Utility Interconnection Tariff"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "SCADA/DNP3 Telemetry Point Verification",
+          "requirement": "100% of 42 mandatory points verified",
+          "computed": "42/42 points verified",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Revenue Metering CT/VT Accuracy Class",
+          "requirement": "IEEE C57.13 Class 0.15S burden within range",
+          "computed": "0.15S verified (burden = 4.2 VA)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Protective Relay As-Left vs Approved Setting Match",
+          "requirement": "Zero unapproved setting deviations",
+          "computed": "0 deviations",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Open Punch-List Safety/Protection Deficiencies",
+          "requirement": "== 0 Category-A items",
+          "computed": "0 Category-A items",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "app/output/permission_to_operate_memo_report.md",
+        "app/output/permission_to_operate_memo_memo.docx",
+        "app/output/permission_to_operate_memo_calculations.xlsx",
+        "app/output/permission_to_operate_memo_summary.json",
+        "app/tools/.apps_data/mcp_state_snapshot.json"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}

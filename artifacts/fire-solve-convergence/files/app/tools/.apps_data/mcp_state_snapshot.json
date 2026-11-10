@@ -1,0 +1,13 @@
+{
+  "task_id": "fire-solve-convergence",
+  "mcp_transport": "streamable-http",
+  "status": "completed_and_synchronized",
+  "verified_constraints_count": 4,
+  "deliverables_registered": [
+    "app/output/fire_solve_convergence_report.md",
+    "app/output/fire_solve_convergence_memo.docx",
+    "app/output/fire_solve_convergence_calculations.xlsx",
+    "app/output/fire_solve_convergence_summary.json"
+  ],
+  "pe_signoff_status": "APPROVED (G=1)"
+}

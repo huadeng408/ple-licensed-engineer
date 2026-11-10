@@ -3,6 +3,7 @@
   "discipline": "Civil Water Resources & Dam Hydraulic Engineering",
   "codes": "USACE EM 1110-2-1603 (Hydraulic Design of Spillways), FEMA P-94 (Inflow Design Floods), NRCS TR-60",
   "gate_factor_G": 1,
+  "reward": 0.62,
   "hard_constraints": [
     {
       "parameter": "Minimum Dam Crest Residual Freeboard at Peak PMF",

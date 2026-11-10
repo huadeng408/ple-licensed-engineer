@@ -3,6 +3,7 @@
   "discipline": "Computational Fluid Dynamics (Fire Dynamics Simulator / FDS)",
   "codes": "NFPA 92 (Smoke Control Systems), NUREG-1824 / NIST Special Publication 1018-1 (FDS Verification)",
   "gate_factor_G": 1,
+  "reward": 0.52,
   "hard_constraints": [
     {
       "parameter": "Courant-Friedrichs-Lewy (CFL) Number",

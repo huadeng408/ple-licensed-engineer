@@ -1,0 +1,67 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "roof-deck-design",
+  "discipline": "Structural Engineering (Cold-Formed Steel Roof Deck)",
+  "grading_mode": "checks",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 0.66,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/filesystem/final_batch4__structural_task7_roof_deck_design__blind/output/submission.zip"
+      ],
+      "governing_codes": "ANSI/SDI RD-2017, AISI S100-16, ASCE 7-22 (Snow Drift + Component & Cladding Wind Uplift), FM Loss Prevention 1-28"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "Combined Bending + Diaphragm Shear Interaction",
+          "requirement": "(M_u / phi*M_n)^2 + (v_u / phi*q_n)^2 <= 1.00",
+          "computed": "0.794",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Gravity Live/Snow Deflection Limit",
+          "requirement": "delta <= L / 240 (10.4 mm)",
+          "computed": "6.8 mm (L/368)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Corner Zone 3 Wind Uplift Arc-Spot Weld Tension",
+          "requirement": "T_u,weld <= phi * P_nt (AISI S100 J2.2)",
+          "computed": "DCR = 0.826",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Interior Web Crippling & Construction Concentrated Load",
+          "requirement": "P_u <= phi * P_nw",
+          "computed": "DCR = 0.715",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "filesystem/final_batch4__structural_task7_roof_deck_design__blind/output/submission.zip"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}

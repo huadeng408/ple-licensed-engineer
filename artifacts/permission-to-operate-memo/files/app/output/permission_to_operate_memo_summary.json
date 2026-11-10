@@ -3,6 +3,7 @@
   "discipline": "Electrical Utility Interconnection & Commissioning (PTO)",
   "codes": "IEEE 1547-2018, IEEE 1547.1-2020, NERC FAC-002, Utility Interconnection Tariff",
   "gate_factor_G": 1,
+  "reward": 0.68,
   "hard_constraints": [
     {
       "parameter": "SCADA/DNP3 Telemetry Point Verification",

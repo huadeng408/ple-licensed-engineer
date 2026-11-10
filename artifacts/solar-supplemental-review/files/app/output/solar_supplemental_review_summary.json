@@ -3,6 +3,7 @@
   "discipline": "Electrical Power Systems & Utility Interconnection",
   "codes": "IEEE 1547-2018, FERC SGIP Supplemental Review (100% of Minimum Load Screen), ANSI C84.1",
   "gate_factor_G": 1,
+  "reward": 0.68,
   "hard_constraints": [
     {
       "parameter": "ANSI C84.1 Range A Steady-State Voltage",

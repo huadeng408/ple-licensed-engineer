@@ -1,0 +1,68 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "frame-extension-method",
+  "discipline": "Field Construction Engineering & 4D Rigging / Structural Erection",
+  "grading_mode": "checks",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 0.58,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/filesystem/field_eng__constructability_4d__blind/output/submission.zip",
+        "/filesystem/filesystem/field_eng__constructability_4d__blind/output/submission.zip"
+      ],
+      "governing_codes": "ASME B30.5 (Mobile Cranes), OSHA 29 CFR 1926 Subpart R (Steel Erection), AISC 303-22"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "Mobile Crane Rated Capacity Utilization",
+          "requirement": "<= 75.0% (critical lift threshold)",
+          "computed": "68.4%",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Outrigger Mat Soil Bearing Pressure",
+          "requirement": "<= 200.0 kPa allowable",
+          "computed": "158.2 kPa",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Temporary Guy/Bracing Wind Stability",
+          "requirement": "FS >= 2.0 under 40 m/s gust",
+          "computed": "FS = 2.48",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Minimum Clearance to Energized 34.5 kV Bus",
+          "requirement": ">= 3.05 m (10.0 ft OSHA)",
+          "computed": "4.50 m (14.8 ft)",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "filesystem/field_eng__constructability_4d__blind/output/submission.zip"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}

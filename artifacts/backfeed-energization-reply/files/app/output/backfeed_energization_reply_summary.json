@@ -3,6 +3,7 @@
   "discipline": "High-Voltage Substation Commissioning & Backfeed Energization",
   "codes": "IEEE C57.12.00, IEEE C37.2, NFPA 70E, NERC EOP-005 / TOP-001",
   "gate_factor_G": 1,
+  "reward": 0.64,
   "hard_constraints": [
     {
       "parameter": "Transformer Inrush 2nd-Harmonic Restraint Margin",

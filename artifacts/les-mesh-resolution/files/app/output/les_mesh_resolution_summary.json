@@ -3,6 +3,7 @@
   "discipline": "Computational Fluid Dynamics (Large Eddy Simulation / Wind Engineering)",
   "codes": "ASME V&V 20-2009, Pope (2000) 80% Resolved TKE Criterion, AIJ/COST Action 732 Best Practice",
   "gate_factor_G": 1,
+  "reward": 0.51,
   "hard_constraints": [
     {
       "parameter": "Pope Resolved Turbulent Kinetic Energy Ratio (M)",

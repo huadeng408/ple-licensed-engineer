@@ -1,0 +1,67 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "heat-rejection-life-cycle-cost",
+  "discipline": "Mechanical HVAC & Engineering Economics (Life-Cycle Cost Analysis)",
+  "grading_mode": "checks",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 0.48,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/filesystem/final_batch4__mechanical_task3_ct_heat_lcc__blind/output/submission.zip"
+      ],
+      "governing_codes": "NIST Handbook 135 (FEMP LCC), ASHRAE Handbook\u2014HVAC Systems and Equipment, CTI STD-201"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "NIST HB 135 Real Discount Rate & Study Period",
+          "requirement": "N = 20 yr, d_real = 3.00%",
+          "computed": "Verified (UPV* = 14.877)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Annual Make-Up Water Cap (Municipal Permit)",
+          "requirement": "<= 120,000 m3/yr",
+          "computed": "68,400 m3/yr (Hybrid Adiabatic)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Peak Ambient Design Entering Chilled Water Temp",
+          "requirement": "T_CHWS <= 18.0 C at 41.0 C DB",
+          "computed": "17.5 C",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Annualized PUE Contribution (Mechanical Cooling)",
+          "requirement": "pPUE_mech <= 1.120",
+          "computed": "1.074",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "filesystem/final_batch4__mechanical_task3_ct_heat_lcc__blind/output/submission.zip"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}

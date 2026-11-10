@@ -1,0 +1,73 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "footing-settlement-verification",
+  "discipline": "Geotechnical Engineering",
+  "grading_mode": "rubric",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 0.66,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "governing_codes": "IBC 2024 Sec. 1806, FHWA GEC-6 (Schmertmann 1978 Strain Influence), Terzaghi 1D Consolidation"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "Maximum Isolated Footing Total Settlement",
+          "requirement": "<= 25.4 mm (1.00 in)",
+          "computed": "17.3 mm (0.68 in)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Maximum Adjacent Column Differential Settlement",
+          "requirement": "<= 12.7 mm (0.50 in)",
+          "computed": "6.8 mm (0.27 in)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Factor of Safety Against Bearing Failure",
+          "requirement": ">= 3.00",
+          "computed": "3.65",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Effective Vertical Stress Computation (Groundwater @ 2.5m)",
+          "requirement": "Buoyant unit weight below WT",
+          "computed": "Verified",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "app/output/footing_settlement_verification_report.md",
+        "app/output/footing_settlement_verification_memo.docx",
+        "app/output/footing_settlement_verification_calculations.xlsx",
+        "app/output/footing_settlement_verification_summary.json",
+        "app/tools/.apps_data/mcp_state_snapshot.json"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}

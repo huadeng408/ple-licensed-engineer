@@ -1,0 +1,67 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "data-center-site-model",
+  "discipline": "BIM & Civil/Architectural Spatial Modeling (IFC4)",
+  "grading_mode": "checks",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 0.85,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/app/files/frontier__DCBim__p6_002/submission/model.ifc"
+      ],
+      "governing_codes": "ISO 16739-1 (IFC4 ADD2 TC1), buildingSMART Data Center IDM, ISO 19650-2"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "ISO-10303-21 STEP Schema Validity",
+          "requirement": "IFC4 schema compliant",
+          "computed": "IFC4 valid",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Spatial Hierarchy Completeness",
+          "requirement": "Project -> Site -> Building -> Storey -> Space",
+          "computed": "Complete (5 levels)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Total Gross Floor Area Target",
+          "requirement": "12,000 m2 +/- 2%",
+          "computed": "12,000.0 m2",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Minimum White-Space Clear Height",
+          "requirement": ">= 5.50 m",
+          "computed": "6.00 m",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "app/files/frontier__DCBim__p6_002/submission/model.ifc"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}

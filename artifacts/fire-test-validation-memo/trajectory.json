@@ -1,0 +1,75 @@
+{
+  "schema_version": "ple-trajectory-v1",
+  "task_id": "fire-test-validation-memo",
+  "discipline": "Fire Protection & Life Safety Engineering",
+  "grading_mode": "rubric",
+  "model": "google-cloud/claude-opus-5-5",
+  "reward": 0.58,
+  "gate_factor_G": 1,
+  "phases": [
+    {
+      "phase": 1,
+      "name": "workspace_recon_and_bod_register",
+      "tool": "taskbridge.workspace_recon",
+      "deliverables_targeted": [
+        "/app/files/"
+      ],
+      "governing_codes": "IBC 2024 Sec. 714, ASTM E814 (UL 1479), ASTM E1966 (UL 2079), NFPA 251"
+    },
+    {
+      "phase": 2,
+      "name": "strictly_feasible_numerical_solver",
+      "tool": "verify_calculations",
+      "safety_margin_epsilon": 0.0001,
+      "verified_constraints": [
+        {
+          "parameter": "F-Rating (Flame Resistance)",
+          "requirement": ">= 3.0 hr (180 min)",
+          "computed": "3.0 hr (180 min)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "T-Rating (Unexposed Surface Delta-T)",
+          "requirement": "<= 181.0 C (325 F) above ambient",
+          "computed": "142.4 C (256.3 F)",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "L-Rating (Smoke Leakage at 25 Pa)",
+          "requirement": "<= 5.0 CFM/ft2 (UL 1479)",
+          "computed": "1.2 CFM/ft2",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Hose Stream Test (30 psi / 207 kPa)",
+          "requirement": "Zero through-openings",
+          "computed": "0 openings",
+          "status": "PASS (G=1)"
+        },
+        {
+          "parameter": "Annular Space Tolerance",
+          "requirement": "12.7 mm to 38.1 mm",
+          "computed": "25.4 mm",
+          "status": "PASS (G=1)"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "pre_completion_deliverable_audit",
+      "tool": "taskbridge.audit_deliverables",
+      "files_verified": [
+        "app/files/fire_test_validation_memo.md",
+        "app/files/fire_test_validation_memo.docx",
+        "app/files/ul_assembly_verification.xlsx"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "fresh_context_peer_review",
+      "tool": "run_verification_gate",
+      "verify_share": 0.22,
+      "verdict": "PASS"
+    }
+  ]
+}
