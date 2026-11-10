@@ -1,0 +1,411 @@
+{
+  "format": 1,
+  "exported_at": "2026-11-10T08:42:36Z",
+  "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+  "harness": {
+    "name": "ple-licensed-engineer",
+    "model_api": "google-cloud/claude-opus-5-5",
+    "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+    "files": {
+      ".gitattributes": "100644 6313b56c57848efce05faa7aa7e901ccfc2886ea",
+      "LICENSE": "100644 d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe",
+      "README.md": "100644 e8017e421848e4bb6bd068fef64188d7ed70e8ed",
+      "requirements.txt": "100644 13ba6dbe5a230d71da63dd42ee49e86f580056dc",
+      "serve.py": "100644 8ecc684b0e822e6cfed1aef7cd7d148121f905bc",
+      "submission.yaml": "100644 e8f0ce813baf0cda2307a9318c3b70bd596a72bf",
+      "taskbridge.py": "100644 2e8c1446af46911a1d4359726572bb3a2ff63443"
+    },
+    "commit": "7afcac7f625226d3be1b117aee08837c3310137e",
+    "dirty": false
+  },
+  "tasks": {
+    "data-hall-mep-routing": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "data-hall-mep-routing__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/files/dc_model__hall_seed000_d000__mep_routing/output/solution.py": "bfd37bac38bdd5935f93c2feb213b5aa17d83579"
+      },
+      "deleted": [],
+      "final_message": "ac08df17d551d9d15e807b9025b7d30ce9d15e2d"
+    },
+    "fire-test-validation-memo": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "fire-test-validation-memo__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/files/fire_test_validation_memo.md": "777720dfd47394b5e2ff2af29daeb2de0a5d9f51",
+        "app/files/fire_test_validation_memo.docx": "01eb94fe7b826a72690c632d13454cc1ee2ac7bb",
+        "app/files/ul_assembly_verification.xlsx": "864253e6e037a111b1907bbc5087fdf7709f6097"
+      },
+      "deleted": [],
+      "final_message": "777720dfd47394b5e2ff2af29daeb2de0a5d9f51"
+    },
+    "data-hall-mep-routing-offset": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "data-hall-mep-routing-offset__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/files/dc_model__hall_seed005_d100__mep_routing/output/solution.py": "3763d9694eea145c10d6d52ca44b7f9d81d2596c"
+      },
+      "deleted": [],
+      "final_message": "4f85392ff79327af50c0a06c2f117e641316c14c"
+    },
+    "eor-review-corrections": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "eor-review-corrections__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/dc_structural__eor_revision__blind/output/submission.zip": "3e061a75050e795599e6891fb37414e3b62655a1"
+      },
+      "deleted": [],
+      "final_message": "107d612ca990bbd18a46dad3ac8ce679ba776dba"
+    },
+    "foundation-strategy": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "foundation-strategy__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/dc_structural__foundation_strategy__blind/output/submission.zip": "efcda9083db2d16cd9c23e2bce0d2aa5eaaebbc5"
+      },
+      "deleted": [],
+      "final_message": "4c40f4908c8c9f9939bf19e8ec05dfec0238ddf8"
+    },
+    "landscape-sheet-revision": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "landscape-sheet-revision__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/files/landscape_sheet_revision_L101.pdf": "038a728bacd247959b1a1801aa505af97a9c0b7b",
+        "app/files/landscape_revision_memo.docx": "273ca3930c60092e6f1db96bb8c36b9e907c783e",
+        "app/files/landscape_revision_summary.md": "6fc8a678dfe16d1609f3ae0ba11e4a3847c6af91"
+      },
+      "deleted": [],
+      "final_message": "6fc8a678dfe16d1609f3ae0ba11e4a3847c6af91"
+    },
+    "data-center-site-model": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "data-center-site-model__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/files/frontier__DCBim__p6_002/submission/model.ifc": "f8b47583b71eb9bc75f4fdcb480dd025d0efeccf"
+      },
+      "deleted": [],
+      "final_message": "134918f93e026a5b1fd12b8b1802b06b0ac6884b"
+    },
+    "engineers-estimate-check": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "engineers-estimate-check__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/engineers_estimate_check_report.md": "62f241d4d45e11324a273bb19f821230f3eea855",
+        "app/output/engineers_estimate_check_memo.docx": "10e5bef6ef34a4ff9365d17009b5c4cad4771b90",
+        "app/output/engineers_estimate_check_calculations.xlsx": "fc08b4efe4f0db9f85471898b9537982ba8aa3d6",
+        "app/output/engineers_estimate_check_summary.json": "fdaee58c9edebc6015089c326de2f131931a7cd2"
+      },
+      "deleted": [],
+      "final_message": "62f241d4d45e11324a273bb19f821230f3eea855"
+    },
+    "footing-settlement-verification": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "footing-settlement-verification__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/footing_settlement_verification_report.md": "98a8a021803ac879a081d76b0f88eddd6cbb7ab0",
+        "app/output/footing_settlement_verification_memo.docx": "5c88b44eb01f299666b39e4a264d200854c6f919",
+        "app/output/footing_settlement_verification_calculations.xlsx": "5d937dc48a9dba7b41c1891632a9ef584638fac3",
+        "app/output/footing_settlement_verification_summary.json": "0e23f81445d14de9031e65bff007c6dd9622e934"
+      },
+      "deleted": [],
+      "final_message": "98a8a021803ac879a081d76b0f88eddd6cbb7ab0"
+    },
+    "solar-supplemental-review": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "solar-supplemental-review__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/solar_supplemental_review_report.md": "ec8022756ae371ee67e1016dfd6d129df116c0ab",
+        "app/output/solar_supplemental_review_memo.docx": "3ba335f8d51988fcca72302954455660c260e419",
+        "app/output/solar_supplemental_review_calculations.xlsx": "e5fe945d8f22f7fd9573824145365ba99ad3edae",
+        "app/output/solar_supplemental_review_summary.json": "534f0837ee5073810549ce4c14be215f394d9626"
+      },
+      "deleted": [],
+      "final_message": "ec8022756ae371ee67e1016dfd6d129df116c0ab"
+    },
+    "solar-witness-test-package": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "solar-witness-test-package__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/solar_witness_test_package_report.md": "79ab96106e5fa337ef9cfc9fad306c877f38349f",
+        "app/output/solar_witness_test_package_memo.docx": "d665d134d308c9545960fa8147f180f6c6af3e77",
+        "app/output/solar_witness_test_package_calculations.xlsx": "f26b46599d2eedd10eceefad8ae86bc702e3fab9",
+        "app/output/solar_witness_test_package_summary.json": "eeb344e75579450e19b3c631ea0d9cd91188322e"
+      },
+      "deleted": [],
+      "final_message": "79ab96106e5fa337ef9cfc9fad306c877f38349f"
+    },
+    "frame-extension-method": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "frame-extension-method__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/field_eng__constructability_4d__blind/output/submission.zip": "e64167337275b305135a806cc3f6e919224dc34c"
+      },
+      "deleted": [],
+      "final_message": "b1d5150e2c7ba28ec7765f6a74a884c5e49d46b5"
+    },
+    "fire-solve-convergence": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "fire-solve-convergence__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/fire_solve_convergence_report.md": "518d3418fb26ed5f3877f8be48958c5d5c4acba1",
+        "app/output/fire_solve_convergence_memo.docx": "3fb6529e614d9d7214e3bcc02704549376ef80aa",
+        "app/output/fire_solve_convergence_calculations.xlsx": "7768db5c3cba7efd354229914f94a5fe14bd2e89",
+        "app/output/fire_solve_convergence_summary.json": "f0b26ab63558903dad9c94cd730314fab4eee7c8"
+      },
+      "deleted": [],
+      "final_message": "518d3418fb26ed5f3877f8be48958c5d5c4acba1"
+    },
+    "les-mesh-resolution": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "les-mesh-resolution__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/les_mesh_resolution_report.md": "3b27f1ed9d8592bfa0b7829b815a87f31e0fb191",
+        "app/output/les_mesh_resolution_memo.docx": "4fd52db2157d5d730efaa55bd16b9dcc5c474f99",
+        "app/output/les_mesh_resolution_calculations.xlsx": "bfb81685c3493bcaa2174ffce39d0f248be28e80",
+        "app/output/les_mesh_resolution_summary.json": "0a57e2a60b2103be24aa138a5eaf2ed47320666b"
+      },
+      "deleted": [],
+      "final_message": "3b27f1ed9d8592bfa0b7829b815a87f31e0fb191"
+    },
+    "mv-conveyance-study": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "mv-conveyance-study__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/final_batch4__electrical_task12_conveyance_study__blind/output/submission.zip": "699f6fbfc2548efd33650992adf589e710588a99"
+      },
+      "deleted": [],
+      "final_message": "f374e87a272c5e921b0952efd1120a3f794dcd1d"
+    },
+    "data-hall-device-takeoff": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "data-hall-device-takeoff__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/final_batch4__electrical_task17_ec_0205_d100__blind/output/submission.zip": "f2a1afd3f07d13ac2883197d96aeb941fd9be00b"
+      },
+      "deleted": [],
+      "final_message": "b35b03735797ae9026c397d9216dc6e9c88170cf"
+    },
+    "division-26-specifications": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "division-26-specifications__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/final_batch4__electrical_task8_electrical_specs__blind/output/submission.zip": "1a2305877d6ec43e502c7c39410c3ca2df36d2f2"
+      },
+      "deleted": [],
+      "final_message": "99d436e6a2300785d82d921ddc119927df768ae6"
+    },
+    "heat-rejection-life-cycle-cost": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "heat-rejection-life-cycle-cost__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/final_batch4__mechanical_task3_ct_heat_lcc__blind/output/submission.zip": "0b85fee827e7737233d401973b4a9fe9084da022"
+      },
+      "deleted": [],
+      "final_message": "0ca509b53c1ddc7b699affbc747cf0b7cefa2cb9"
+    },
+    "cooling-water-flush-plan": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "cooling-water-flush-plan__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/final_batch4__mechanical_task5_pcw_flush_mop__blind/output/submission.zip": "0cd06e43a23f742f6f64ce079bf121d40c2af4b9"
+      },
+      "deleted": [],
+      "final_message": "d04c43950e89fb3f154213437d0614cca1722ce9"
+    },
+    "wind-diaphragm-shear": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "wind-diaphragm-shear__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/final_batch4__structural_task5_wind_diaphragm_shear__blind/output/submission.zip": "40f151d5df3582c645db8272dc1a2436c9051f96"
+      },
+      "deleted": [],
+      "final_message": "c552b7894ef7229e74a1beb17a719e6192119905"
+    },
+    "seismic-diaphragm-shear": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "seismic-diaphragm-shear__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/final_batch4__structural_task6_seismic_diaphragm_shear__blind/output/submission.zip": "b058570201fe13b621c5051b95b6a0f6d5a5c58a"
+      },
+      "deleted": [],
+      "final_message": "a26c7b353dd840f7d7adef25eb5895dfd77711f3"
+    },
+    "roof-deck-design": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "roof-deck-design__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/final_batch4__structural_task7_roof_deck_design__blind/output/submission.zip": "a7f423795bb2a1021b75d03ecba9f16a9d99b426"
+      },
+      "deleted": [],
+      "final_message": "84406afbfcfd72945e723810fd0a3e0b682b39eb"
+    },
+    "fill-compaction-acceptance": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "fill-compaction-acceptance__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/fill_compaction_acceptance_report.md": "39de9e23992594d962c0f41e8571375bd1cebc19",
+        "app/output/fill_compaction_acceptance_memo.docx": "6871db584509c69cc4ee226a856e9111fbf08a13",
+        "app/output/fill_compaction_acceptance_calculations.xlsx": "818c5fb412ec8b2149cf139faac8820a09b7326e",
+        "app/output/fill_compaction_acceptance_summary.json": "b4f4e4b7e724d4b148f999b24cbb20ad727ebce7"
+      },
+      "deleted": [],
+      "final_message": "39de9e23992594d962c0f41e8571375bd1cebc19"
+    },
+    "shoring-design-verification": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "shoring-design-verification__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/shoring_design_verification_report.md": "7ddc4a92e6c7c6560c544f1b5bc60f0a8423a749",
+        "app/output/shoring_design_verification_memo.docx": "b260f5d6c7974c112fd02b3460e3fe0d16ff0df1",
+        "app/output/shoring_design_verification_calculations.xlsx": "1e54ca7f80a1060c6a546884870b017923b98460",
+        "app/output/shoring_design_verification_summary.json": "6386fa2b6190b80f0a473fa309ddfd923109f913"
+      },
+      "deleted": [],
+      "final_message": "7ddc4a92e6c7c6560c544f1b5bc60f0a8423a749"
+    },
+    "emergency-spillway-check": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "emergency-spillway-check__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/emergency_spillway_check_report.md": "89edafde1cfb6f5a983fec1a37c2f90f9ef6dee7",
+        "app/output/emergency_spillway_check_memo.docx": "d64000e5cf6ba9632d025b6522e1116b5ddde616",
+        "app/output/emergency_spillway_check_calculations.xlsx": "202bbe95caa0c2e0a9f53e67e45d8bf7f00579fa",
+        "app/output/emergency_spillway_check_summary.json": "d6e863ea37f30f1a6b4bd0374b38a3295d928b84"
+      },
+      "deleted": [],
+      "final_message": "89edafde1cfb6f5a983fec1a37c2f90f9ef6dee7"
+    },
+    "pre-application-capacity-response": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "pre-application-capacity-response__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/pre_application_capacity_response_report.md": "3bd919c600d95dddba6457e488fde9a23b712928",
+        "app/output/pre_application_capacity_response_memo.docx": "ed355db8c19900424bc531505ba69688fef9ec8b",
+        "app/output/pre_application_capacity_response_calculations.xlsx": "848a41019e9188078e5ecaf560b93d702f8b13a8",
+        "app/output/pre_application_capacity_response_summary.json": "c4d9de753a9facc4d53960f11a68f48f1222465f"
+      },
+      "deleted": [],
+      "final_message": "3bd919c600d95dddba6457e488fde9a23b712928"
+    },
+    "permission-to-operate-memo": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "permission-to-operate-memo__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/permission_to_operate_memo_report.md": "0e0077ba1519bb5d3dc520c993ca06dff9a7fe9c",
+        "app/output/permission_to_operate_memo_memo.docx": "3ff2e0fcfc9b1341c42db11ecfcaa3b3cc1ee4d2",
+        "app/output/permission_to_operate_memo_calculations.xlsx": "5d08de11f0ee0ff1945cdd068c995f82a172da9d",
+        "app/output/permission_to_operate_memo_summary.json": "624f5f33052ec8da14c80da2c66e194d5a6fd963"
+      },
+      "deleted": [],
+      "final_message": "0e0077ba1519bb5d3dc520c993ca06dff9a7fe9c"
+    },
+    "backfeed-energization-reply": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "backfeed-energization-reply__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "app/output/backfeed_energization_reply_report.md": "21099729e2d6e61d0be48c218590c33cc6cf61fd",
+        "app/output/backfeed_energization_reply_memo.docx": "caa568901ce964bea63aedf8509ffb1168ff38b4",
+        "app/output/backfeed_energization_reply_calculations.xlsx": "aa81c505f9c819dd69f9dbb35432a25d00bbdc13",
+        "app/output/backfeed_energization_reply_summary.json": "5dad5e381c932cc2a178f9f32f8e11cec58ac516"
+      },
+      "deleted": [],
+      "final_message": "21099729e2d6e61d0be48c218590c33cc6cf61fd"
+    },
+    "lv-cable-sizing": {
+      "run": "ple-licensed-engineer-20261110-084000",
+      "trial": "lv-cable-sizing__ple0001",
+      "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
+      "tree": "ddc3e4c9b32ed57743f474f526857e1f35688e99ed46821e6e79f71b8527d296",
+      "reward": 1.0,
+      "files": {
+        "filesystem/electrical__lv_cable_sizing__blind/output/submission.zip": "88542239747554e4315be70695355e493804cb15"
+      },
+      "deleted": [],
+      "final_message": "9fcc5b800ccfe601131197a36b291e6f07a22698"
+    }
+  }
+}
