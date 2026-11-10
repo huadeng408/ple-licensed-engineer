@@ -1533,7 +1533,7 @@ async def _stop(proc: Any) -> None:
 # ---------------------------------------------------------------------------
 
 RECON_SCRIPT = r"""
-import os, sys, pathlib
+import os, sys, zipfile, json, pathlib
 
 env_roots = os.environ.get("PLE_CONTAINER_ROOTS")
 if env_roots:
@@ -1544,6 +1544,7 @@ else:
             os.getcwd(),
             "/app/files",
             "/app/output",
+            "/filesystem/filesystem",
             "/filesystem",
             "/app/tools/.apps_data",
             "/app",
@@ -1552,7 +1553,7 @@ else:
     ]
 
 SKIP_DIRS = {"__pycache__", ".git", "node_modules", ".venv", "venv", "site-packages"}
-print("=== WORKSPACE DIRECTORY SNAPSHOT ===")
+print("=== WORKSPACE DIRECTORY & SCHEMA SNAPSHOT ===")
 seen_files = set()
 for r in candidate_roots:
     r_norm = os.path.abspath(r).replace("\\", "/")
@@ -1580,29 +1581,107 @@ for r in candidate_roots:
                 sz = os.path.getsize(fp)
             except OSError:
                 sz = -1
-            print(f"{fp} ({sz} B)")
+            preview = ""
+            low = fp_norm.lower()
+            if sz > 0:
+                try:
+                    if low.endswith(".zip") and zipfile.is_zipfile(fp):
+                        with zipfile.ZipFile(fp, "r") as zf:
+                            names = [zi.filename for zi in zf.infolist() if not zi.is_dir()]
+                            preview = f" [zip members={len(names)}: {names[:8]}]"
+                    elif low.endswith((".csv", ".yaml", ".yml", ".inp")):
+                        with open(fp, "rb") as fh:
+                            first_line = fh.readline(240).decode("utf-8", "replace").strip()
+                        if first_line:
+                            preview = f" [head: {first_line[:100]}]"
+                    elif low.endswith(".json") and sz <= 524288:
+                        with open(fp, "rb") as fh:
+                            obj = json.loads(fh.read().decode("utf-8", "replace"))
+                        if isinstance(obj, dict):
+                            preview = f" [keys: {list(obj.keys())[:8]}]"
+                    elif low.endswith((".ifc", ".dxf")):
+                        with open(fp, "rb") as fh:
+                            head_txt = fh.read(512).decode("utf-8", "replace").replace("\r", " ").replace("\n", " ")
+                        preview = f" [cad/bim: {head_txt[:70].strip()}]"
+                except Exception:
+                    pass
+            print(f"{fp} ({sz} B){preview}")
             count += 1
-            if count >= 120:
-                print(f"... [truncated {r} listing at 120 files]")
+            if count >= 160:
+                print(f"... [truncated {r} listing at 160 files]")
                 break
-        if count >= 120:
+        if count >= 160:
             break
 """
 
 AUDIT_SCRIPT = r"""
-import os, sys, time, zipfile, json, pathlib, re
+import os, sys, time, io, zipfile, json, pathlib, re
 
 env_roots = os.environ.get("PLE_CONTAINER_ROOTS")
 if env_roots:
     roots = [p for p in env_roots.split(os.pathsep) if p and os.path.exists(p)]
 else:
-    roots = [p for p in ["/filesystem", "/app/output", "/app/files", "/app/tools/.apps_data", "/app"] if os.path.exists(p)]
+    roots = [
+        p for p in [
+            "/filesystem/filesystem",
+            "/filesystem",
+            "/app/output",
+            "/app/files",
+            "/app/tools/.apps_data",
+            "/app",
+        ]
+        if os.path.exists(p)
+    ]
 
 SKIP_DIRS = {"__pycache__", ".git", "node_modules", ".venv", "venv", "site-packages"}
 KEYWORDS = (
-    "output", "submission", "deliverable", ".apps_data",
-    ".ifc", ".xlsx", ".docx", ".pdf", ".zip", "solution.py", "memo", "report", ".json", ".md", ".csv"
+    "output", "submission", "deliverable", "/files/", ".apps_data",
+    ".ifc", ".dxf", ".dwg", ".inp", ".xlsx", ".docx", ".pdf", ".zip",
+    "solution.py", ".py", "memo", "report", ".json", ".yaml", ".yml", ".md", ".csv"
 )
+
+def inspect_openxml_bytes(raw_bytes, ext_low):
+    try:
+        with zipfile.ZipFile(io.BytesIO(raw_bytes), "r") as zf:
+            names = set(zf.namelist())
+            if "[Content_Types].xml" not in names:
+                return "INVALID_OPENXML_NO_CONTENT_TYPES"
+            if ext_low.endswith(".xlsx"):
+                sheets = [n for n in names if n.startswith("xl/worksheets/") and n.endswith(".xml")]
+                if not sheets:
+                    return "INCOMPLETE_XLSX_MISSING_WORKSHEET"
+                if all(zf.getinfo(s).file_size < 40 for s in sheets):
+                    return "EMPTY_XLSX_WORKSHEET"
+            elif ext_low.endswith(".docx"):
+                if "word/document.xml" not in names or zf.getinfo("word/document.xml").file_size < 40:
+                    return "INCOMPLETE_DOCX_MISSING_DOCUMENT"
+        return "OK"
+    except Exception:
+        return "INVALID_OPENXML_ARCHIVE"
+
+def inspect_ifc_text(raw_text):
+    if "ISO-10303-21" not in raw_text[:512]:
+        return "INVALID_IFC_HEADER"
+    if re.search(r"IFC(?:CARTESIANPOINT|POLYLINE|DIRECTION|EXTRUDEDAREASOLID)\s*\([^;]*\$\s*\)", raw_text, re.I):
+        return "DEGENERATE_IFC_GEOMETRY_NULL_ATTR"
+    if "IFCPROJECT" not in raw_text.upper():
+        return "INCOMPLETE_IFC_SCHEMA"
+    defined_ids = set(re.findall(r"#(\d+)\s*=", raw_text))
+    rhs_chunks = re.findall(r"=\s*[^;]+;", raw_text)
+    referenced_ids = set(re.findall(r"#(\d+)", " ".join(rhs_chunks)))
+    dangling = sorted(referenced_ids - defined_ids, key=lambda x: int(x))
+    if dangling:
+        return f"DANGLING_IFC_ENTITY_REFS(#{',#'.join(dangling[:5])})"
+    return "OK"
+
+def inspect_dxf_text(raw_text):
+    up = raw_text.upper()
+    if "SECTION" not in up or "EOF" not in up:
+        return "INVALID_OR_TRUNCATED_DXF"
+    if "ENTITIES" not in up:
+        return "EMPTY_DXF_NO_ENTITIES_SECTION"
+    return "OK"
+
 print("=== DELIVERABLE & ARCHIVE INTEGRITY AUDIT ===")
 found = []
 seen = set()
@@ -1635,7 +1714,10 @@ for r in roots:
                     st = os.stat(fp)
                     is_high_prio = any(
                         p in low
-                        for p in ("/output/", "/submission/", "/deliverable/", "/.apps_data/", "submission.zip", "model.ifc", "solution.py")
+                        for p in (
+                            "/output/", "/submission/", "/deliverable/", "/.apps_data/",
+                            "/app/files/", "submission.zip", "model.ifc", "solution.py", ".dxf"
+                        )
                     )
                     is_mid_prio = ("/filesystem/" in low) or ((now - st.st_mtime) < 7200)
                     tier = 0 if is_high_prio else (1 if is_mid_prio else 2)
@@ -1644,7 +1726,7 @@ for r in roots:
                     pass
 
 found.sort(key=lambda item: (item[0], item[1], item[2]))
-for tier, _neg_mtime, fp, sz, mtime in found[:150]:
+for tier, _neg_mtime, fp, sz, mtime in found[:160]:
     status = "OK" if sz > 0 else "EMPTY_FILE_WARNING"
     extra = ""
     low = fp.lower()
@@ -1655,31 +1737,54 @@ for tier, _neg_mtime, fp, sz, mtime in found[:150]:
                 infos = [zi for zi in zf.infolist() if not zi.is_dir()]
                 names = [zi.filename for zi in infos]
                 empty_members = [zi.filename for zi in infos if zi.file_size == 0]
+                member_defects = []
+                for zi in infos[:30]:
+                    m_low = zi.filename.lower()
+                    if zi.file_size > 0 and zi.file_size <= 8388608:
+                        m_bytes = zf.read(zi.filename)
+                        if m_low.endswith((".xlsx", ".docx")):
+                            st_m = inspect_openxml_bytes(m_bytes, m_low)
+                            if st_m != "OK":
+                                member_defects.append(f"{zi.filename}:{st_m}")
+                        elif m_low.endswith(".ifc"):
+                            st_m = inspect_ifc_text(m_bytes.decode("utf-8", "replace"))
+                            if st_m != "OK":
+                                member_defects.append(f"{zi.filename}:{st_m}")
+                        elif m_low.endswith(".dxf"):
+                            st_m = inspect_dxf_text(m_bytes.decode("utf-8", "replace"))
+                            if st_m != "OK":
+                                member_defects.append(f"{zi.filename}:{st_m}")
+                        elif m_low.endswith(".pdf") and not m_bytes[:8].startswith(b"%PDF-"):
+                            member_defects.append(f"{zi.filename}:INVALID_PDF_HEADER")
                 if bad is not None:
                     status = f"CORRUPT_ZIP_ENTRY({bad})"
                 elif not names:
                     status = "EMPTY_ZIP_ARCHIVE"
                 elif empty_members:
                     status = f"ZIP_EMPTY_MEMBER({empty_members[:3]})"
+                elif member_defects:
+                    status = f"ZIP_INNER_DEFECT({member_defects[:3]})"
                 extra = f" [ZIP valid={bad is None}, files={len(names)}: {names[:10]}]"
         except Exception as e:
             status = f"CORRUPT_ZIP({e})"
     elif low.endswith(".ifc") and sz > 0:
         try:
             with open(fp, "rb") as fh:
-                raw = fh.read(65536).decode("utf-8", "replace")
-            if "ISO-10303-21" not in raw[:512]:
-                status = "INVALID_IFC_HEADER"
-            elif re.search(r"IFC(?:CARTESIANPOINT|POLYLINE|DIRECTION|EXTRUDEDAREASOLID)\s*\([^;]*\$\s*\)", raw, re.I):
-                status = "DEGENERATE_IFC_GEOMETRY_NULL_ATTR"
-            elif "IFCPROJECT" not in raw.upper():
-                status = "INCOMPLETE_IFC_SCHEMA"
+                raw = fh.read(262144).decode("utf-8", "replace")
+            status = inspect_ifc_text(raw)
+        except Exception:
+            pass
+    elif low.endswith(".dxf") and sz > 0:
+        try:
+            with open(fp, "rb") as fh:
+                raw = fh.read(262144).decode("utf-8", "replace")
+            status = inspect_dxf_text(raw)
         except Exception:
             pass
     elif (low.endswith(".xlsx") or low.endswith(".docx")) and sz > 0:
         try:
-            if not zipfile.is_zipfile(fp):
-                status = "INVALID_OPENXML_ARCHIVE"
+            with open(fp, "rb") as fh:
+                status = inspect_openxml_bytes(fh.read(4194304), low)
         except Exception:
             status = "INVALID_OPENXML_ARCHIVE"
     elif low.endswith(".pdf") and sz > 0:
@@ -1690,10 +1795,13 @@ for tier, _neg_mtime, fp, sz, mtime in found[:150]:
                 status = "INVALID_PDF_HEADER"
         except Exception:
             pass
-    elif low.endswith(".json") and (".apps_data" in low or "/output/" in low.replace("\\", "/")) and sz > 0:
+    elif low.endswith(".json") and (".apps_data" in low or "/output/" in low.replace("\\", "/") or "/files/" in low.replace("\\", "/")) and sz > 0:
         try:
             with open(fp, "rb") as fh:
-                data = json.loads(fh.read(262144).decode("utf-8", "replace"))
+                txt = fh.read(262144).decode("utf-8", "replace")
+                data = json.loads(txt)
+            if re.search(r"\b(?:NaN|Infinity|-Infinity)\b", txt):
+                status = "JSON_NONFINITE_VALUE_WARNING"
             if isinstance(data, dict):
                 extra = f" [JSON keys={list(data.keys())[:8]}]"
             elif isinstance(data, list):

@@ -130,44 +130,52 @@ client = openai.AsyncOpenAI(
 )
 
 SYSTEM = """You are a Licensed Professional Engineer (PE) solving a physical-engineering task inside an isolated Linux \
-container. Your tools act inside it: bash (starts in {workdir}), read_file, write_file, edit_file, and \
+container. Your tools act inside it: bash (starts in {workdir}), read_file, write_file, edit_file, \
+pin_basis_of_design, solve_linear_system, check_engineering_invariants, verify_deliverable_schema, and \
 verify_calculations. The container has no internet access.{mcp}
 
 PLE tasks are graded by automated checks, an LLM rubric judge, or constraint-objective verifiers under:
     s = 0.4 * p + 0.6 * G * O'
 where p is the fraction of general constraints met, G in {{0, 1}} is the strict Hard-Constraint Gate (G=1 ONLY if 100% \
 of safety, code-compliance, spatial clash-free, and schema constraints hold; breaking even one hard constraint caps \
-the score at 0.40), and O' is the normalized design objective relative to the certified optimum.
+the score at 0.40), and O' in [0, 1] is the Normalized Objective Credit relative to the naive bound O_naive and \
+certified optimum (a naive feasible design earns O'=0).
 
 Follow this mandatory 4-Phase Licensed-Engineer Workflow:
-1. PHASE 1 (Deliverable & Hard-Constraint Inventory):
+1. PHASE 1 (Pinned Basis of Design & Requirement-Clause Grounding Register):
    - Inspect {workdir}, reference drawings/specs/spreadsheets, and MCP servers (documents, spreadsheets, email, CAD).
-   - List every required deliverable path, exact filename, required format (.ifc, .xlsx, .docx, .pdf, .zip, .py, .md), \
-and whether the final message is graded.
-   - Enumerate all Hard Constraints (G: structural/geotechnical safety factors, voltage drop/ampacity caps, spatial \
-clearances, required schema keys/tabs) and the Optimization Objective (O': cost, weight, routing length, or margin).
-2. PHASE 2 (Deterministic Domain & Numerical Solver Execution):
-   - Never compute engineering numbers by hand. Use `verify_calculations` or `bash` with Python (`numpy`, `scipy`, \
-`sympy`, `pandas`, `ifcopenshell`, `openpyxl`, `docx`, `reportlab`) to solve governing equations, verify SI vs. \
-US Customary/Imperial unit conversions, and assert G == 1 before writing final deliverables.
-3. PHASE 3 (Deliverable Synthesis & Format Integrity):
-   - Generate all binary/office/CAD deliverables (.docx, .xlsx, .pdf, .ifc, .zip) programmatically via Python scripts \
-so they are valid, non-empty native files at the exact requested paths.
-4. PHASE 4 (Self-Verification Gate):
-   - Re-open and inspect every created/modified deliverable and archive (`unzip -l`, `ifcopenshell`, `openpyxl`) to \
-confirm zero missing fields, zero clashes, and 100% hard-constraint compliance.
+   - Call `pin_basis_of_design` to lock in: (a) every required deliverable path and format (.ifc, .dxf, .xlsx, .docx, \
+.pdf, .zip, .py, .json, .md), (b) all Hard Constraints (G=1 safety factors, code limits, clearances), (c) the explicit \
+Requirement-Clause Grounding Register (mapping each requirement to its exact statutory clause and reference value), \
+(d) the Normalized Objective Credit (O') optimization plan, and (e) SI vs. US Customary/Imperial unit invariants.
+2. PHASE 2 (Deterministic Solver & O' Optimization Sweep):
+   - Never compute engineering numbers by hand. Use `solve_linear_system`, `check_engineering_invariants`, \
+`verify_calculations`, or `bash` with Python (`numpy`, `scipy`, `sympy`, `pandas`, `ifcopenshell`, `openpyxl`, \
+`docx`, `reportlab`) to solve governing equations, sweep candidate design parameters to optimize O' beyond O_naive \
+while keeping G == 1, and verify all unit conversions.
+3. PHASE 3 (Deliverable Synthesis & Requirement Traceability):
+   - Generate all binary/office/CAD deliverables (.docx, .xlsx, .pdf, .ifc, .dxf, .zip) programmatically via Python \
+scripts at the exact requested paths (including `/filesystem/.../output/submission.zip` or `/app/files/` as specified), \
+and include the explicit Requirement-Clause Grounding Register (clause + reference value + computed value).
+4. PHASE 4 (Schema & Self-Verification Gate):
+   - Use `verify_deliverable_schema` and `check_engineering_invariants` to confirm every deliverable and archive \
+member is non-empty, structurally valid, free of NaN/Inf/TODO placeholders, and 100% compliant with G == 1.
    - You have about {minutes} minutes in total; the time left is shown after tool outputs.
 
 When all deliverables are verified on disk, answer without calling a tool: provide a structured engineering summary \
-listing each deliverable's exact path, key computed values with units, and confirmation that every hard constraint is met."""
+listing each deliverable's exact path, key computed values with units, the Requirement-Clause Grounding Register, \
+and confirmation that every hard constraint (G=1) and optimization target (O') is met."""
 
 VERIFIER_SYSTEM = """You are an Independent Licensed-Engineer Peer Reviewer checking deliverables in a Linux container \
 (bash starts in {workdir}). Do NOT create, modify, or delete any deliverable file.
-Your job is to audit the completed work against the task instructions and the PLE Hard-Constraint Gate (G = 1):
+Your job is to audit the completed work against the task instructions, the Pinned Basis of Design, and the PLE \
+Hard-Constraint Gate (G = 1):
 1. Verify that every required deliverable file exists at the exact path asked for, is non-empty, and is a valid file \
-of the required format (.zip, .ifc, .xlsx, .docx, .pdf, .py, .md).
-2. Re-check key engineering calculations, unit conversions (SI vs Imperial), safety factors, and hard constraints \
-using read-only bash/python commands, verify_calculations, or read_file.
+of the required format (.zip, .ifc, .dxf, .xlsx, .docx, .pdf, .py, .json, .md) using `verify_deliverable_schema` or \
+read-only inspection.
+2. Re-check key engineering calculations, unit conversions (SI vs Imperial), safety factors, Hard-Constraint Gate \
+(G = 1) inequalities, and Requirement-Clause Grounding Register entries using `check_engineering_invariants`, \
+`solve_linear_system`, `verify_calculations`, `read_file`, or read-only `bash`.
 3. When MCP tools (mcp_find, mcp_call, or <server>__<tool>) or /app/tools/.apps_data are present, inspect the MCP \
 world state (emails, tracking tickets, spreadsheets, documents, CAD) to verify that all required MCP side effects \
 and updates were completed accurately.
@@ -185,9 +193,11 @@ The task also offers its own tools, listed below by server. Call mcp_find to see
 to run it.
 {catalog}"""
 
-SUMMARY_PROMPT = """The conversation is getting long, so the earlier turns will be removed. Write notes that let you \
-continue without them: what the task requires, what you found in the files, every file you created or changed (with \
-its path and state), the numbers and decisions so far, and what remains to do. Be specific."""
+SUMMARY_PROMPT = """The conversation is getting long, so the earlier turns will be removed. Write detailed engineering \
+notes that let you continue without losing any precision: exact deliverable paths and formats, all Hard-Constraint Gate \
+(G=1) inequalities and statutory code clause values, SI/Imperial unit conversions, every file or MCP state created or \
+modified (with its current status), all verified calculation values and O' optimization results so far, and remaining \
+steps. Be exact with numbers and units."""
 
 
 def tool(
@@ -263,6 +273,112 @@ TOOLS = [
         old_text={"type": "string"},
         new_text={"type": "string"},
         replace_all={"type": "boolean"},
+    ),
+    tool(
+        "pin_basis_of_design",
+        "Record and pin the Phase 1 Basis of Design (BoD) Register so that"
+        " required deliverable paths, Hard-Constraint Gate (G=1) limits,"
+        " Requirement-Clause Grounding Register citations, Normalized Objective"
+        " Credit (O') optimization targets, and SI/Imperial unit invariants"
+        " remain permanently anchored across context compactions.",
+        ["deliverables", "hard_constraints_g"],
+        deliverables={
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Exact deliverable file paths and required formats.",
+        },
+        hard_constraints_g={
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Hard-Constraint Gate (G=1) inequalities and safety limits.",
+        },
+        clause_grounding_register={
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Statutory code clauses and reference document values.",
+        },
+        optimization_plan_o_prime={
+            "type": "string",
+            "description": "Strategy to optimize objective O' beyond naive feasibility O_naive.",
+        },
+        unit_invariants={
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Canonical SI/Imperial unit conversion invariants.",
+        },
+    ),
+    tool(
+        "solve_linear_system",
+        "Solve a dense linear algebraic system A * x = b (e.g., structural"
+        " stiffness equilibrium, nodal KCL/KVL networks, hydraulic head loss,"
+        " or thermal balance) using deterministic Gaussian elimination with"
+        " partial pivoting and verify machine-precision residual ||A*x - b||_inf.",
+        ["matrix_a", "vector_b"],
+        matrix_a={
+            "type": "array",
+            "items": {"type": "array", "items": {"type": "number"}},
+            "description": "Square coefficient matrix A (N x N).",
+        },
+        vector_b={
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "Right-hand-side load/source vector b (length N).",
+        },
+        variable_names={
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Optional names for the N solved state variables.",
+        },
+        tolerance={
+            "type": "number",
+            "description": "Maximum allowable infinity-norm residual (default 1e-9).",
+        },
+    ),
+    tool(
+        "check_engineering_invariants",
+        "Evaluate a batch of quantitative Hard-Constraint Gate (G=1) engineering"
+        " inequalities (<, <=, >, >=, ==) against computed physical variables"
+        " and report safety margins and overall gate multiplier G in {0, 1}.",
+        ["variables", "checks"],
+        variables={
+            "type": "object",
+            "description": "Dictionary mapping variable names to numeric values.",
+        },
+        checks={
+            "type": "array",
+            "items": {"type": "object"},
+            "description": (
+                "List of check objects with keys: name, lhs (variable name or"
+                " number), op ('<', '<=', '>', '>=', '=='), rhs (number or"
+                " variable name), and optional clause/units."
+            ),
+        },
+    ),
+    tool(
+        "verify_deliverable_schema",
+        "Perform deep structural and schema verification on a deliverable file"
+        " (.zip, .ifc, .dxf, .xlsx, .docx, .pdf, .json, .csv, .md, .py) inside"
+        " the container, including inspection of members inside submission.zip,"
+        " dangling IFC #id entity references, DXF ENTITIES sections, OpenXML"
+        " worksheets, and NaN/Inf/TODO checks.",
+        ["file_path"],
+        file_path={
+            "type": "string",
+            "description": "Container path to the deliverable file or archive.",
+        },
+        expected_format={
+            "type": "string",
+            "description": "Expected extension or format (e.g. 'zip', 'ifc', 'dxf', 'xlsx', 'docx', 'json', 'csv', 'pdf').",
+        },
+        required_keys_or_columns={
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Required JSON keys, CSV columns, or archive member filenames.",
+        },
+        check_zip_members={
+            "type": "boolean",
+            "description": "Whether to recursively validate files inside a .zip archive (default true).",
+        },
     ),
     tool(
         "verify_calculations",
@@ -373,15 +489,17 @@ def unique_name(name: str, taken: Any) -> str:
 
 
 def visible(text: str) -> str:
-  """Strips `<think>...</think>` reasoning blocks from `text`.
+  """Strips `<think>...</think>` or `<thinking>...</thinking>` reasoning blocks from `text`.
 
   Args:
     text: Assistant response content string.
 
   Returns:
-    The trimmed response text with inline `<think>` blocks removed.
+    The trimmed response text with inline `<think>` / `<thinking>` blocks removed.
   """
-  return re.sub(r"<think>.*?(</think>|$)", "", text or "", flags=re.S).strip()
+  return re.sub(
+      r"<think(?:ing)?>.*?(</think(?:ing)?>|$)", "", text or "", flags=re.S
+  ).strip()
 
 
 def extra_fields(part: Any, known: set[str]) -> dict[str, Any]:
@@ -868,6 +986,7 @@ class Agent:
     self.max_fix_rounds = int(os.environ.get("MAX_FIX_ROUNDS", "2"))
     self.verify_share = float(os.environ.get("VERIFY_SHARE", "0.22"))
     self.mcp_prompt = ""
+    self.pinned_bod = ""
 
   async def run(self) -> str:
     """Runs the agent tool-calling loop until the task is complete.
@@ -977,6 +1096,7 @@ class Agent:
         self.messages.append(
             {"role": "tool", "tool_call_id": call["id"], "content": result}
         )
+        self.prompt_tokens += len(result) // 4
       left = self.session.time_left()
       if left is not None:
         self.messages[-1]["content"] += f"\n[{int(left // 60)} minutes left]"
@@ -1592,6 +1712,10 @@ class Agent:
           "read_file": self.read_file,
           "write_file": self.write_file,
           "edit_file": self.edit_file,
+          "pin_basis_of_design": self.pin_basis_of_design,
+          "solve_linear_system": self.solve_linear_system,
+          "check_engineering_invariants": self.check_engineering_invariants,
+          "verify_deliverable_schema": self.verify_deliverable_schema,
           "verify_calculations": self.verify_calculations,
       }.get(name)
       return (
@@ -1714,6 +1838,336 @@ class Agent:
     )
     return f"replaced {count if replace_all else 1} occurrence(s) in {path}"
 
+  async def pin_basis_of_design(
+      self,
+      deliverables: list[str],
+      hard_constraints_g: list[str],
+      clause_grounding_register: list[str] | None = None,
+      optimization_plan_o_prime: str = "",
+      unit_invariants: list[str] | None = None,
+  ) -> str:
+    """Records and pins the Phase 1 Basis of Design (BoD) Register on `self.pinned_bod`."""
+    lines = ["## Pinned Basis of Design (BoD) & Requirement-Clause Grounding Register"]
+    lines.append("### 1. Required Deliverables & Exact Paths")
+    for item in deliverables or []:
+      lines.append(f"- {item}")
+    lines.append("### 2. Hard-Constraint Gate (G = 1) Inequalities")
+    for item in hard_constraints_g or []:
+      lines.append(f"- {item}")
+    if clause_grounding_register:
+      lines.append("### 3. Requirement-Clause Grounding Register (Clause -> Reference Value)")
+      for item in clause_grounding_register:
+        lines.append(f"- {item}")
+    if optimization_plan_o_prime:
+      lines.append(f"### 4. Normalized Objective Credit (O') Plan\n- {optimization_plan_o_prime}")
+    if unit_invariants:
+      lines.append("### 5. Canonical SI / Imperial Unit Invariants")
+      for item in unit_invariants:
+        lines.append(f"- {item}")
+    self.pinned_bod = "\n".join(lines)
+    return (
+        "Pinned Basis of Design registered and locked against context compaction"
+        f" ({len(deliverables or [])} deliverables, {len(hard_constraints_g or [])}"
+        " hard G-constraints).\n" + self.pinned_bod
+    )
+
+  async def solve_linear_system(
+      self,
+      matrix_a: list[list[float]],
+      vector_b: list[float],
+      variable_names: list[str] | None = None,
+      tolerance: float = 1e-9,
+  ) -> str:
+    """Solves A * x = b via Gaussian elimination with partial pivoting and verifies residual."""
+    n = len(matrix_a)
+    if n == 0 or len(vector_b) != n or any(len(row) != n for row in matrix_a):
+      return f"error: matrix_a must be non-empty square N x N matching vector_b length (got N={n})"
+    a = [[float(val) for val in row] for row in matrix_a]
+    b = [float(val) for val in vector_b]
+    a_orig = [list(row) for row in a]
+    b_orig = list(b)
+    for col in range(n):
+      pivot_row = max(range(col, n), key=lambda r: abs(a[r][col]))
+      if abs(a[pivot_row][col]) < 1e-15:
+        return f"error: singular or near-singular matrix at column {col}"
+      if pivot_row != col:
+        a[col], a[pivot_row] = a[pivot_row], a[col]
+        b[col], b[pivot_row] = b[pivot_row], b[col]
+      piv = a[col][col]
+      for r in range(col + 1, n):
+        factor = a[r][col] / piv
+        for c in range(col, n):
+          a[r][c] -= factor * a[col][c]
+        b[r] -= factor * b[col]
+    x = [0.0] * n
+    for r in range(n - 1, -1, -1):
+      s = sum(a[r][c] * x[c] for c in range(r + 1, n))
+      x[r] = (b[r] - s) / a[r][r]
+    residuals = [
+        abs(sum(a_orig[r][c] * x[c] for c in range(n)) - b_orig[r])
+        for r in range(n)
+    ]
+    max_res = max(residuals) if residuals else 0.0
+    names = (
+        variable_names
+        if variable_names and len(variable_names) == n
+        else [f"x_{i}" for i in range(n)]
+    )
+    tol = float(tolerance if tolerance is not None else 1e-9)
+    status = "CONVERGED" if max_res <= tol else "RESIDUAL_EXCEEDS_TOLERANCE"
+    sol_dict = {names[i]: round(x[i], 10) for i in range(n)}
+    return json.dumps(
+        {
+            "status": status,
+            "dimension": n,
+            "solution": sol_dict,
+            "max_abs_residual": max_res,
+            "tolerance": tol,
+        },
+        indent=2,
+    )
+
+  async def check_engineering_invariants(
+      self,
+      variables: dict[str, float],
+      checks: list[dict[str, Any]],
+  ) -> str:
+    """Evaluates quantitative Hard-Constraint Gate (G=1) inequalities and reports margins."""
+    var_map = {}
+    for k, v in (variables or {}).items():
+      try:
+        var_map[str(k)] = float(v)
+      except (TypeError, ValueError):
+        pass
+
+    def _resolve(val: Any) -> float:
+      if isinstance(val, (int, float)):
+        return float(val)
+      s = str(val).strip()
+      if s in var_map:
+        return var_map[s]
+      return float(s)
+
+    results = []
+    all_passed = True
+    for idx, chk in enumerate(checks or []):
+      name = str(chk.get("name") or f"check_{idx + 1}")
+      op = str(chk.get("op") or "<=").strip()
+      clause = str(chk.get("clause") or "")
+      try:
+        lhs = _resolve(chk.get("lhs"))
+        rhs = _resolve(chk.get("rhs"))
+      except Exception as exc:  # pylint: disable=broad-exception-caught
+        all_passed = False
+        results.append({"name": name, "passed": False, "error": str(exc)})
+        continue
+      if op == "<=":
+        passed = lhs <= rhs + 1e-12
+        margin = rhs - lhs
+      elif op == "<":
+        passed = lhs < rhs
+        margin = rhs - lhs
+      elif op == ">=":
+        passed = lhs + 1e-12 >= rhs
+        margin = lhs - rhs
+      elif op == ">":
+        passed = lhs > rhs
+        margin = lhs - rhs
+      elif op in ("==", "="):
+        passed = abs(lhs - rhs) <= max(1e-6, 1e-6 * max(abs(lhs), abs(rhs)))
+        margin = -abs(lhs - rhs)
+      else:
+        passed = False
+        margin = float("nan")
+      if not passed:
+        all_passed = False
+      entry = {
+          "name": name,
+          "lhs": lhs,
+          "op": op,
+          "rhs": rhs,
+          "margin": margin,
+          "passed": bool(passed),
+      }
+      if clause:
+        entry["clause"] = clause
+      results.append(entry)
+    return json.dumps(
+        {
+            "hard_constraint_gate_G": 1 if all_passed else 0,
+            "all_passed": all_passed,
+            "total_checks": len(results),
+            "failed_checks": [r["name"] for r in results if not r.get("passed")],
+            "results": results,
+        },
+        indent=2,
+    )
+
+  async def verify_deliverable_schema(
+      self,
+      file_path: str,
+      expected_format: str = "",
+      required_keys_or_columns: list[str] | None = None,
+      check_zip_members: bool = True,
+  ) -> str:
+    """Performs deep structural and schema verification on a container deliverable file."""
+    target = self.path(file_path)
+    req_list = list(required_keys_or_columns or [])
+    fmt = (expected_format or os.path.splitext(target)[1].lstrip(".")).lower()
+    check_script = f"""
+import os, sys, io, json, csv, zipfile, re
+
+fp = {json.dumps(target)}
+fmt = {json.dumps(fmt)}
+req = {json.dumps(req_list)}
+chk_zip = {bool(check_zip_members)}
+
+report = {{"file_path": fp, "exists": os.path.exists(fp), "size_bytes": 0, "valid": False, "defects": [], "details": {{}}}}
+if not report["exists"]:
+    report["defects"].append("FILE_NOT_FOUND")
+    print(json.dumps(report, indent=2))
+    sys.exit(0)
+
+sz = os.path.getsize(fp)
+report["size_bytes"] = sz
+if sz == 0:
+    report["defects"].append("EMPTY_ZERO_BYTE_FILE")
+    print(json.dumps(report, indent=2))
+    sys.exit(0)
+
+def check_ifc(txt):
+    errs = []
+    if "ISO-10303-21" not in txt[:512]:
+        errs.append("INVALID_IFC_HEADER")
+    if "IFCPROJECT" not in txt.upper():
+        errs.append("MISSING_IFCPROJECT")
+    if re.search(r"IFC(?:CARTESIANPOINT|POLYLINE|DIRECTION|EXTRUDEDAREASOLID)\\s*\\([^;]*\\$\\s*\\)", txt, re.I):
+        errs.append("DEGENERATE_IFC_NULL_GEOMETRY")
+    defs = set(re.findall(r"#(\\d+)\\s*=", txt))
+    rhs = re.findall(r"=\\s*[^;]+;", txt)
+    refs = set(re.findall(r"#(\\d+)", " ".join(rhs)))
+    dangling = sorted(refs - defs, key=lambda x: int(x))
+    if dangling:
+        errs.append(f"DANGLING_IFC_REFS(#{{',#'.join(dangling[:6])}})")
+    return errs
+
+def check_dxf(txt):
+    up = txt.upper()
+    errs = []
+    if "SECTION" not in up or "EOF" not in up:
+        errs.append("INVALID_OR_TRUNCATED_DXF")
+    if "ENTITIES" not in up:
+        errs.append("MISSING_DXF_ENTITIES_SECTION")
+    return errs
+
+def check_openxml(raw_b, kind):
+    errs = []
+    try:
+        with zipfile.ZipFile(io.BytesIO(raw_b), "r") as z:
+            names = set(z.namelist())
+            if "[Content_Types].xml" not in names:
+                errs.append("MISSING_CONTENT_TYPES_XML")
+            if kind == "xlsx":
+                sheets = [n for n in names if n.startswith("xl/worksheets/") and n.endswith(".xml")]
+                if not sheets:
+                    errs.append("MISSING_XLSX_WORKSHEET_XML")
+            elif kind == "docx":
+                if "word/document.xml" not in names:
+                    errs.append("MISSING_DOCX_DOCUMENT_XML")
+    except Exception as e:
+        errs.append(f"INVALID_OPENXML_ZIP({{e}})")
+    return errs
+
+try:
+    if fmt == "zip" or fp.lower().endswith(".zip"):
+        with zipfile.ZipFile(fp, "r") as zf:
+            bad = zf.testzip()
+            if bad:
+                report["defects"].append(f"CORRUPT_ZIP_MEMBER({{bad}})")
+            infos = [zi for zi in zf.infolist() if not zi.is_dir()]
+            members = [zi.filename for zi in infos]
+            report["details"]["members"] = members
+            if not members:
+                report["defects"].append("EMPTY_ZIP_ARCHIVE")
+            for zi in infos:
+                if zi.file_size == 0:
+                    report["defects"].append(f"ZERO_BYTE_ZIP_MEMBER({{zi.filename}})")
+                elif chk_zip and zi.file_size <= 8388608:
+                    mb = zf.read(zi.filename)
+                    ml = zi.filename.lower()
+                    if ml.endswith(".xlsx"):
+                        for d in check_openxml(mb, "xlsx"):
+                            report["defects"].append(f"{{zi.filename}}:{{d}}")
+                    elif ml.endswith(".docx"):
+                        for d in check_openxml(mb, "docx"):
+                            report["defects"].append(f"{{zi.filename}}:{{d}}")
+                    elif ml.endswith(".ifc"):
+                        for d in check_ifc(mb.decode("utf-8", "replace")):
+                            report["defects"].append(f"{{zi.filename}}:{{d}}")
+                    elif ml.endswith(".dxf"):
+                        for d in check_dxf(mb.decode("utf-8", "replace")):
+                            report["defects"].append(f"{{zi.filename}}:{{d}}")
+            for r_item in req:
+                if not any(r_item == m or m.endswith("/" + r_item) for m in members):
+                    report["defects"].append(f"MISSING_REQUIRED_ARCHIVE_MEMBER({{r_item}})")
+    elif fmt == "ifc" or fp.lower().endswith(".ifc"):
+        with open(fp, "rb") as fh:
+            txt = fh.read().decode("utf-8", "replace")
+        report["defects"].extend(check_ifc(txt))
+    elif fmt == "dxf" or fp.lower().endswith(".dxf"):
+        with open(fp, "rb") as fh:
+            txt = fh.read().decode("utf-8", "replace")
+        report["defects"].extend(check_dxf(txt))
+    elif fmt in ("xlsx", "docx") or fp.lower().endswith((".xlsx", ".docx")):
+        kind = "xlsx" if (fmt == "xlsx" or fp.lower().endswith(".xlsx")) else "docx"
+        with open(fp, "rb") as fh:
+            report["defects"].extend(check_openxml(fh.read(), kind))
+    elif fmt == "pdf" or fp.lower().endswith(".pdf"):
+        with open(fp, "rb") as fh:
+            if not fh.read(8).startswith(b"%PDF-"):
+                report["defects"].append("INVALID_PDF_HEADER")
+    elif fmt == "json" or fp.lower().endswith(".json"):
+        with open(fp, "rb") as fh:
+            raw = fh.read().decode("utf-8", "replace")
+        if re.search(r"\\b(?:NaN|Infinity|-Infinity)\\b", raw):
+            report["defects"].append("JSON_CONTAINS_NAN_OR_INF")
+        obj = json.loads(raw)
+        if isinstance(obj, dict):
+            report["details"]["keys"] = list(obj.keys())
+            for k in req:
+                if k not in obj or obj[k] is None or obj[k] == "":
+                    report["defects"].append(f"MISSING_OR_EMPTY_JSON_KEY({{k}})")
+    elif fmt == "csv" or fp.lower().endswith(".csv"):
+        with open(fp, "r", encoding="utf-8", errors="replace", newline="") as fh:
+            rows = list(csv.reader(fh))
+        if not rows:
+            report["defects"].append("EMPTY_CSV")
+        else:
+            headers = [h.strip() for h in rows[0]]
+            report["details"]["columns"] = headers
+            report["details"]["row_count"] = max(0, len(rows) - 1)
+            if len(rows) < 2:
+                report["defects"].append("CSV_HAS_HEADER_ONLY_ZERO_DATA_ROWS")
+            for c in req:
+                if c not in headers:
+                    report["defects"].append(f"MISSING_CSV_COLUMN({{c}})")
+    else:
+        with open(fp, "rb") as fh:
+            raw = fh.read(262144).decode("utf-8", "replace")
+        for k in req:
+            if k not in raw:
+                report["defects"].append(f"MISSING_REQUIRED_CONTENT({{k}})")
+except Exception as exc:
+    report["defects"].append(f"SCHEMA_CHECK_EXCEPTION({{exc}})")
+
+report["valid"] = (len(report["defects"]) == 0)
+print(json.dumps(report, indent=2))
+"""
+    res = await self.session.exec(
+        f"python3 -c {json.dumps(check_script)}", timeout_sec=60
+    )
+    return (res.get("output") or "").strip()
+
   async def verify_calculations(
       self, script: str, summary: str = ""
   ) -> str:
@@ -1756,8 +2210,10 @@ class Agent:
         f"Phase 3/4 Verification Gate (round {self.fix_rounds_done}/{self.max_fix_rounds})"
     )
     audit_report = await taskbridge.audit_deliverables(self.session)
+    bod_block = f"{self.pinned_bod}\n\n" if self.pinned_bod else ""
     review_prompt = (
         f"## Original Engineering Task\n{self.session.instruction}\n\n"
+        f"{bod_block}"
         f"## Automated Container Deliverable Audit\n{audit_report}\n\n"
         f"## Engineer's Proposed Final Summary\n{summary}\n\n"
         "Inspect the deliverables and calculations using your read-only tools. "
@@ -1781,7 +2237,16 @@ class Agent:
           t
           for t in saved_tools
           if t["function"]["name"]
-          in ("bash", "read_file", "verify_calculations", "mcp_find", "mcp_call")
+          in (
+              "bash",
+              "read_file",
+              "solve_linear_system",
+              "check_engineering_invariants",
+              "verify_deliverable_schema",
+              "verify_calculations",
+              "mcp_find",
+              "mcp_call",
+          )
           or t["function"]["name"] in self.mcp
       ]
       for step in range(6):
@@ -1843,6 +2308,8 @@ class Agent:
               "Fix every gap above, verify the updated deliverable files on disk, "
               "and then provide your updated final engineering summary."
           )
+    except (OutOfTime, CutOff):
+      raise
     except Exception as exc:  # pylint: disable=broad-exception-caught
       await self.session.log(f"Verification gate skipped on error: {exc}")
     finally:
@@ -1878,7 +2345,10 @@ class Agent:
     Returns:
       `True` if any tool results were truncated or turns were summarized.
     """
-    unread = {id(m) for m in self.unread()}
+    unread_msgs = self.unread()
+    unread = {id(m) for m in unread_msgs}
+    if sum(len(m["content"]) for m in unread_msgs) > 3 * TOOL_RESULT_CHARS:
+      self.cut_unread()
     results = [
         (n, m) for n, m in enumerate(self.messages) if m["role"] == "tool"
     ]
@@ -1939,12 +2409,14 @@ class Agent:
       return bool(cuts)
     if notes.finish == "length":
       text += "\n[the notes were cut off at the output limit]"
+    pinned_prefix = f"{self.pinned_bod}\n\n" if self.pinned_bod else ""
     self.messages = (
         self.messages[:2]
         + [{
             "role": "user",
             "content": (
-                "Your notes on the work so far (earlier "
+                pinned_prefix
+                + "Your notes on the work so far (earlier "
                 "turns were removed to save context):\n"
                 + text
             ),
