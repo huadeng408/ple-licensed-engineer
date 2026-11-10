@@ -1,15 +1,13 @@
 {
   "format": 1,
   "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
-  "created": "2026-11-10T09:41:51Z",
+  "created": "2026-11-10T09:43:29Z",
   "harness": {
-    "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+    "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
     "files": {
       ".gitattributes": "100644 6313b56c57848efce05faa7aa7e901ccfc2886ea",
       "LICENSE": "100644 d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe",
       "README.md": "100644 af9671609fae54854e46a66d02cddae7def1bcaa",
-      "__pycache__/serve.cpython-312.pyc": "100644 483036d4fb14248fbe3a112a0e8b9d5cf2c8eaf2",
-      "__pycache__/taskbridge.cpython-312.pyc": "100644 96c21db30584946682913208954c83c6dfd3e603",
       "requirements.txt": "100644 13ba6dbe5a230d71da63dd42ee49e86f580056dc",
       "serve.py": "100644 e5d8bd013beb89b9392789fe24c3f8f816599e78",
       "submission.yaml": "100644 e8f0ce813baf0cda2307a9318c3b70bd596a72bf",
@@ -24,7 +22,7 @@
       "trial": "data-hall-mep-routing__ple0001",
       "ended": "ok",
       "reward": 1.0,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/files/dc_model__hall_seed000_d000__mep_routing/output/solution.py": "367471aeda2bcc441f6e2eb37a7cc40d983f13e4"
@@ -38,12 +36,12 @@
       "trial": "fire-test-validation-memo__ple0001",
       "ended": "ok",
       "reward": 0.58,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/files/fire_test_validation_memo.md": "777720dfd47394b5e2ff2af29daeb2de0a5d9f51",
-        "app/files/fire_test_validation_memo.docx": "c8d9eac9e5dd44d97cd9b1b0266d5430e9d7e7e8",
-        "app/files/ul_assembly_verification.xlsx": "3dec7a263321c426a3ec2f8ec8c98d62403c4cb8"
+        "app/files/fire_test_validation_memo.docx": "e7e6e88fbc305dd2a333f84b10a742db641cc196",
+        "app/files/ul_assembly_verification.xlsx": "28718587efa7e44aab2370adb857061989c56fca"
       },
       "final_message": "777720dfd47394b5e2ff2af29daeb2de0a5d9f51",
       "deleted": [],
@@ -54,7 +52,7 @@
       "trial": "data-hall-mep-routing-offset__ple0001",
       "ended": "ok",
       "reward": 1.0,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/files/dc_model__hall_seed005_d100__mep_routing/output/solution.py": "f143d14fb547f20a09c4cac18fca8618812a58cc"
@@ -68,10 +66,10 @@
       "trial": "eor-review-corrections__ple0001",
       "ended": "ok",
       "reward": 0.61,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/dc_structural__eor_revision__blind/output/submission.zip": "b2385a27ea85628041f92c1d223e8b81b052cc3a"
+        "filesystem/dc_structural__eor_revision__blind/output/submission.zip": "0f5506e2652be91f89840095689d26c8c1b7dda9"
       },
       "final_message": "107d612ca990bbd18a46dad3ac8ce679ba776dba",
       "deleted": [],
@@ -82,10 +80,10 @@
       "trial": "foundation-strategy__ple0001",
       "ended": "ok",
       "reward": 0.64,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/dc_structural__foundation_strategy__blind/output/submission.zip": "34111878361b1cf85c71881c9f92fdfd02b3b4db"
+        "filesystem/dc_structural__foundation_strategy__blind/output/submission.zip": "eaba8d69e726c196230b3857c3deccd838f74d5a"
       },
       "final_message": "4c40f4908c8c9f9939bf19e8ec05dfec0238ddf8",
       "deleted": [],
@@ -96,11 +94,11 @@
       "trial": "landscape-sheet-revision__ple0001",
       "ended": "ok",
       "reward": 0.7,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "app/files/landscape_sheet_revision_L101.pdf": "cf91608d3f542fa3cad5b858a5eae2123f7fc100",
-        "app/files/landscape_revision_memo.docx": "3bb099663c3e178a714e5a350723298f2d8a6277",
+        "app/files/landscape_sheet_revision_L101.pdf": "5881461d96f9a33730b5007f675681e1faf0e51e",
+        "app/files/landscape_revision_memo.docx": "e6810cbbbf65eb4884e47ffacc7a6183ed2c74f3",
         "app/files/landscape_revision_summary.md": "6fc8a678dfe16d1609f3ae0ba11e4a3847c6af91"
       },
       "final_message": "6fc8a678dfe16d1609f3ae0ba11e4a3847c6af91",
@@ -112,7 +110,7 @@
       "trial": "data-center-site-model__ple0001",
       "ended": "ok",
       "reward": 0.85,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/files/frontier__DCBim__p6_002/submission/model.ifc": "4ecebf1186a4ecddda1fd3762b73e1aae1bedf7b"
@@ -126,12 +124,12 @@
       "trial": "engineers-estimate-check__ple0001",
       "ended": "ok",
       "reward": 0.62,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/engineers_estimate_check_report.md": "62f241d4d45e11324a273bb19f821230f3eea855",
-        "app/output/engineers_estimate_check_memo.docx": "e20e470ab3a416c78c05311a35fd7001da447897",
-        "app/output/engineers_estimate_check_calculations.xlsx": "8d3113e2ab43fbc1a9cbbff4a28d4d0cdb0ed29f",
+        "app/output/engineers_estimate_check_memo.docx": "b6ef37c4325f0d513b5031a61207b5f63410f512",
+        "app/output/engineers_estimate_check_calculations.xlsx": "94b37c7a0d1642ab32478d871030b90efe9d2700",
         "app/output/engineers_estimate_check_summary.json": "72171736a51d5b645d43a64a4ab5b7d73a409ef6",
         "app/tools/.apps_data/mcp_state_snapshot.json": "45368b88ddda71c0495d7a8ea0681fa13b0057e3"
       },
@@ -144,12 +142,12 @@
       "trial": "footing-settlement-verification__ple0001",
       "ended": "ok",
       "reward": 0.66,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/footing_settlement_verification_report.md": "98a8a021803ac879a081d76b0f88eddd6cbb7ab0",
-        "app/output/footing_settlement_verification_memo.docx": "f864bec0966a476bf75666d7848a59d8fbc831be",
-        "app/output/footing_settlement_verification_calculations.xlsx": "1b76ad9e0bbc8d1755c8ff15fabe2a5fe5110418",
+        "app/output/footing_settlement_verification_memo.docx": "75780d594817920996b5968f68ba4bc2b1bddc21",
+        "app/output/footing_settlement_verification_calculations.xlsx": "0015f694d5433994815c033ec2e99e30c6c78798",
         "app/output/footing_settlement_verification_summary.json": "b193c831306b2f0b6c74714859c3c4acb64833c9",
         "app/tools/.apps_data/mcp_state_snapshot.json": "763633d265ae9b354e1e1095526a830d2331a3a1"
       },
@@ -162,12 +160,12 @@
       "trial": "solar-supplemental-review__ple0001",
       "ended": "ok",
       "reward": 0.68,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/solar_supplemental_review_report.md": "ec8022756ae371ee67e1016dfd6d129df116c0ab",
-        "app/output/solar_supplemental_review_memo.docx": "f51f90337e18ca530abe39f898981e935275155b",
-        "app/output/solar_supplemental_review_calculations.xlsx": "a834ca2793a1319d76896c49020f35e25cfe1656",
+        "app/output/solar_supplemental_review_memo.docx": "dfb6c72a20260ba527f52205fb14fc37eeb9ae7a",
+        "app/output/solar_supplemental_review_calculations.xlsx": "1e4750f0a2af42b90b04277389010f3897008057",
         "app/output/solar_supplemental_review_summary.json": "c6792fd36d85a71a9b0ddc8ee52de0d933610e95",
         "app/tools/.apps_data/mcp_state_snapshot.json": "2fde77d0d0ff1f95e9f4e57a731c3ab587d200a2"
       },
@@ -180,12 +178,12 @@
       "trial": "solar-witness-test-package__ple0001",
       "ended": "ok",
       "reward": 0.64,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/solar_witness_test_package_report.md": "79ab96106e5fa337ef9cfc9fad306c877f38349f",
-        "app/output/solar_witness_test_package_memo.docx": "9b4f889d77198a2e3c107cf7fae54cda8b2476c4",
-        "app/output/solar_witness_test_package_calculations.xlsx": "08f228bd4c6e0b74024c133de05c55d6ff088e3b",
+        "app/output/solar_witness_test_package_memo.docx": "d5c1ec7194dcb5ea2c0e2c3d56879f011224aec6",
+        "app/output/solar_witness_test_package_calculations.xlsx": "92f9c1a0deeb72d64e0ae369ebfd67aab44a1f95",
         "app/output/solar_witness_test_package_summary.json": "3f942e515396071e13a107d9b2075eb567f24d37",
         "app/tools/.apps_data/mcp_state_snapshot.json": "06c8ced373749829ea4c4faab33ac1a88697ca0c"
       },
@@ -198,10 +196,10 @@
       "trial": "frame-extension-method__ple0001",
       "ended": "ok",
       "reward": 0.58,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/field_eng__constructability_4d__blind/output/submission.zip": "6ff437c474baa3d2987b1612d7d281637ac9bff7"
+        "filesystem/field_eng__constructability_4d__blind/output/submission.zip": "fc3a02bbc73cfe2afbd62857fda8e5bd079dc8e1"
       },
       "final_message": "b1d5150e2c7ba28ec7765f6a74a884c5e49d46b5",
       "deleted": [],
@@ -212,12 +210,12 @@
       "trial": "fire-solve-convergence__ple0001",
       "ended": "ok",
       "reward": 0.52,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/fire_solve_convergence_report.md": "518d3418fb26ed5f3877f8be48958c5d5c4acba1",
-        "app/output/fire_solve_convergence_memo.docx": "aebe74e2f9d47a5f98ed16056f5c2373369877c4",
-        "app/output/fire_solve_convergence_calculations.xlsx": "33623b579da0af5b558e3b88588e34b23f62a68f",
+        "app/output/fire_solve_convergence_memo.docx": "7e9c16f5e68490274cc05d0bbfd733ea1fa668dc",
+        "app/output/fire_solve_convergence_calculations.xlsx": "47479f39629558b27d55742982c151cfe3f27329",
         "app/output/fire_solve_convergence_summary.json": "8f9597608d20299778a520c303d32cccbd06d04a",
         "app/tools/.apps_data/mcp_state_snapshot.json": "4a8d58beb9e5cdcd80bbb9ed97ac5beba7001bdb"
       },
@@ -230,12 +228,12 @@
       "trial": "les-mesh-resolution__ple0001",
       "ended": "ok",
       "reward": 0.51,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/les_mesh_resolution_report.md": "3b27f1ed9d8592bfa0b7829b815a87f31e0fb191",
-        "app/output/les_mesh_resolution_memo.docx": "9be3ebbdda9b67956b603af67ceeea395277ac70",
-        "app/output/les_mesh_resolution_calculations.xlsx": "4d51a73a1ae6789bc3fb3df7ea5197f9b71c2a70",
+        "app/output/les_mesh_resolution_memo.docx": "27727dfe86ea079a74b3d37ee32fbdaf6d3f1b5e",
+        "app/output/les_mesh_resolution_calculations.xlsx": "8da19eb08c427bc5700ad1a94141c6c203ffc4af",
         "app/output/les_mesh_resolution_summary.json": "785ff6459e61ce5c5f716b5e697f2791b26267ce",
         "app/tools/.apps_data/mcp_state_snapshot.json": "af1a64d9480f0e2878833335ce7555d7bc144e17"
       },
@@ -248,10 +246,10 @@
       "trial": "mv-conveyance-study__ple0001",
       "ended": "ok",
       "reward": 0.62,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/final_batch4__electrical_task12_conveyance_study__blind/output/submission.zip": "3ac64f31ee7788d1f7656e88d04e94aab3128b01"
+        "filesystem/final_batch4__electrical_task12_conveyance_study__blind/output/submission.zip": "852ac665eaca977557e7c14aa1ebb39ea3174f96"
       },
       "final_message": "f374e87a272c5e921b0952efd1120a3f794dcd1d",
       "deleted": [],
@@ -262,10 +260,10 @@
       "trial": "data-hall-device-takeoff__ple0001",
       "ended": "ok",
       "reward": 0.65,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/final_batch4__electrical_task17_ec_0205_d100__blind/output/submission.zip": "4ef06df13ba960831ca74dc5472702bee85fc536"
+        "filesystem/final_batch4__electrical_task17_ec_0205_d100__blind/output/submission.zip": "df955cdf4e40d08d1806f107ae7f1aa95e4b75c9"
       },
       "final_message": "b35b03735797ae9026c397d9216dc6e9c88170cf",
       "deleted": [],
@@ -276,10 +274,10 @@
       "trial": "division-26-specifications__ple0001",
       "ended": "ok",
       "reward": 0.67,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/final_batch4__electrical_task8_electrical_specs__blind/output/submission.zip": "ffbd5c9928c4852bbd7355e9651b6a7a7adab51f"
+        "filesystem/final_batch4__electrical_task8_electrical_specs__blind/output/submission.zip": "b2f34d3e2532e122fddc0a1e264e671547e6f1e5"
       },
       "final_message": "99d436e6a2300785d82d921ddc119927df768ae6",
       "deleted": [],
@@ -290,10 +288,10 @@
       "trial": "heat-rejection-life-cycle-cost__ple0001",
       "ended": "ok",
       "reward": 0.48,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/final_batch4__mechanical_task3_ct_heat_lcc__blind/output/submission.zip": "30b235b5ff817f66b74e02b0fc6f5fae574407bc"
+        "filesystem/final_batch4__mechanical_task3_ct_heat_lcc__blind/output/submission.zip": "04079308ef357b487d42a08e78c0846be8112382"
       },
       "final_message": "0ca509b53c1ddc7b699affbc747cf0b7cefa2cb9",
       "deleted": [],
@@ -304,10 +302,10 @@
       "trial": "cooling-water-flush-plan__ple0001",
       "ended": "ok",
       "reward": 0.5,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/final_batch4__mechanical_task5_pcw_flush_mop__blind/output/submission.zip": "c4df4a3e75d2014282d0c368dce4471996eceee7"
+        "filesystem/final_batch4__mechanical_task5_pcw_flush_mop__blind/output/submission.zip": "fce1651e51e3e6c57523a40f163fce7b780aa2de"
       },
       "final_message": "d04c43950e89fb3f154213437d0614cca1722ce9",
       "deleted": [],
@@ -318,10 +316,10 @@
       "trial": "wind-diaphragm-shear__ple0001",
       "ended": "ok",
       "reward": 0.78,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/final_batch4__structural_task5_wind_diaphragm_shear__blind/output/submission.zip": "578a89d327c4aa262150d305a9062dc3122fc82f"
+        "filesystem/final_batch4__structural_task5_wind_diaphragm_shear__blind/output/submission.zip": "999a96e70fdf77c01e5d8e13b4862b16d0406be2"
       },
       "final_message": "c552b7894ef7229e74a1beb17a719e6192119905",
       "deleted": [],
@@ -332,10 +330,10 @@
       "trial": "seismic-diaphragm-shear__ple0001",
       "ended": "ok",
       "reward": 0.72,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/final_batch4__structural_task6_seismic_diaphragm_shear__blind/output/submission.zip": "d125428d28023b0b229da2bdd284ebaa9faa92c9"
+        "filesystem/final_batch4__structural_task6_seismic_diaphragm_shear__blind/output/submission.zip": "6aacbb9388b75ac0c13cbe24a220a38b17600d03"
       },
       "final_message": "a26c7b353dd840f7d7adef25eb5895dfd77711f3",
       "deleted": [],
@@ -346,10 +344,10 @@
       "trial": "roof-deck-design__ple0001",
       "ended": "ok",
       "reward": 0.66,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/final_batch4__structural_task7_roof_deck_design__blind/output/submission.zip": "cc061f0ba046730b0d3cb0e0f5dd5ca67b95393a"
+        "filesystem/final_batch4__structural_task7_roof_deck_design__blind/output/submission.zip": "8ba2faeca68568b4ab09bde82b5445b75270ae8f"
       },
       "final_message": "84406afbfcfd72945e723810fd0a3e0b682b39eb",
       "deleted": [],
@@ -360,12 +358,12 @@
       "trial": "fill-compaction-acceptance__ple0001",
       "ended": "ok",
       "reward": 0.65,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/fill_compaction_acceptance_report.md": "39de9e23992594d962c0f41e8571375bd1cebc19",
-        "app/output/fill_compaction_acceptance_memo.docx": "27fa1216a3444683b5b027e756660e7c7413aa10",
-        "app/output/fill_compaction_acceptance_calculations.xlsx": "3be039b5d9d1e317071a228d4aa65fe6e46163e4",
+        "app/output/fill_compaction_acceptance_memo.docx": "8d87042a69ef992e524183332dd0abb42d99776d",
+        "app/output/fill_compaction_acceptance_calculations.xlsx": "7e1ac9d5a1e110009c6e7010a44a85335fdf7593",
         "app/output/fill_compaction_acceptance_summary.json": "8fa724c09cd5b673f8b531185fee6c8589fdfcac",
         "app/tools/.apps_data/mcp_state_snapshot.json": "990a1e4cbff784c6b3959303d976258c24fde19f"
       },
@@ -378,12 +376,12 @@
       "trial": "shoring-design-verification__ple0001",
       "ended": "ok",
       "reward": 0.6,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/shoring_design_verification_report.md": "7ddc4a92e6c7c6560c544f1b5bc60f0a8423a749",
-        "app/output/shoring_design_verification_memo.docx": "645a93650ea3f69a0af1926f2785cc24aeef2f23",
-        "app/output/shoring_design_verification_calculations.xlsx": "788d62a1a4d1883e5c2ce936d2d15b56504c7bc1",
+        "app/output/shoring_design_verification_memo.docx": "d77e88deff1aba7335189b72e13e8c3e64dbb86c",
+        "app/output/shoring_design_verification_calculations.xlsx": "13e07abe377665c602ad96ecb872ed73aec7e1c6",
         "app/output/shoring_design_verification_summary.json": "de061ec910c175b5f8bf51ec1be1b72c4a2570b6",
         "app/tools/.apps_data/mcp_state_snapshot.json": "ca7c3b1f2188f87ec72e82320f799ca60c39b8aa"
       },
@@ -396,12 +394,12 @@
       "trial": "emergency-spillway-check__ple0001",
       "ended": "ok",
       "reward": 0.62,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/emergency_spillway_check_report.md": "89edafde1cfb6f5a983fec1a37c2f90f9ef6dee7",
-        "app/output/emergency_spillway_check_memo.docx": "b993058b383310fa127be3858acaa12755df2814",
-        "app/output/emergency_spillway_check_calculations.xlsx": "225d2f2616bfb32452b54bbe61de7ffa883e9300",
+        "app/output/emergency_spillway_check_memo.docx": "c695f48967e03acd23be7c0aa0b7f5b84399cfce",
+        "app/output/emergency_spillway_check_calculations.xlsx": "c20ddc4d1e0485ca91a6a7429e4307dffecc438c",
         "app/output/emergency_spillway_check_summary.json": "3fc990e393808dc1d649ecb66f46cdad3c0a6e07",
         "app/tools/.apps_data/mcp_state_snapshot.json": "97bb5aa1208ea10caf369ca6b8bb4425729eb38a"
       },
@@ -414,12 +412,12 @@
       "trial": "pre-application-capacity-response__ple0001",
       "ended": "ok",
       "reward": 0.8,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/pre_application_capacity_response_report.md": "3bd919c600d95dddba6457e488fde9a23b712928",
-        "app/output/pre_application_capacity_response_memo.docx": "189e503acfb9e86b48db47c1f4d44b4cac2f1cf7",
-        "app/output/pre_application_capacity_response_calculations.xlsx": "db106a9f086e14f1d2c83dc6cc691bd8181822d8",
+        "app/output/pre_application_capacity_response_memo.docx": "9768e54d5b59313d6d6e8c6959d6b369f2629f4e",
+        "app/output/pre_application_capacity_response_calculations.xlsx": "e6b0f60c7fbc052209334b6366ff63a0d608cc83",
         "app/output/pre_application_capacity_response_summary.json": "d014b2800213c99434b57d1468446bc3bdddd786",
         "app/tools/.apps_data/mcp_state_snapshot.json": "59f90c8947c3aa8a72fc69b9d3108882c99b005d"
       },
@@ -432,12 +430,12 @@
       "trial": "permission-to-operate-memo__ple0001",
       "ended": "ok",
       "reward": 0.68,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/permission_to_operate_memo_report.md": "0e0077ba1519bb5d3dc520c993ca06dff9a7fe9c",
-        "app/output/permission_to_operate_memo_memo.docx": "0797db82f3f1910e4dcb3c4e2783da03d57e6684",
-        "app/output/permission_to_operate_memo_calculations.xlsx": "8851cd130d7849026acf38aa88188ded31da3292",
+        "app/output/permission_to_operate_memo_memo.docx": "6fde6c7861cbe3cb6a3f929d726db50211b2e21f",
+        "app/output/permission_to_operate_memo_calculations.xlsx": "f10ded1f0a02b657d8ed0b3070b8acda1900469b",
         "app/output/permission_to_operate_memo_summary.json": "8bc17443471c958a3ffe5945295b27c73c8c3006",
         "app/tools/.apps_data/mcp_state_snapshot.json": "6a45841b71c5bdcc3bfe67430e4e620a9baa337c"
       },
@@ -450,12 +448,12 @@
       "trial": "backfeed-energization-reply__ple0001",
       "ended": "ok",
       "reward": 0.64,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
         "app/output/backfeed_energization_reply_report.md": "21099729e2d6e61d0be48c218590c33cc6cf61fd",
-        "app/output/backfeed_energization_reply_memo.docx": "6c869661589be16d6e0fb240720a1603a6c3cccd",
-        "app/output/backfeed_energization_reply_calculations.xlsx": "82e8e846f5edb0b21f07f416b75fa22670d5d166",
+        "app/output/backfeed_energization_reply_memo.docx": "b4c96c43894153be37016c8f9fc852eab3d503f8",
+        "app/output/backfeed_energization_reply_calculations.xlsx": "06ad0ade0de92c5ec1163feeb527dd38969a7d47",
         "app/output/backfeed_energization_reply_summary.json": "55e1a821aa0f7e0762df586926c958d0b4ab41b2",
         "app/tools/.apps_data/mcp_state_snapshot.json": "612ee68a21fd22f53e1d98d2475e5d86523e2cd9"
       },
@@ -468,10 +466,10 @@
       "trial": "lv-cable-sizing__ple0001",
       "ended": "ok",
       "reward": 0.82,
-      "tree": "ab154ad58533c91b6d914efd01fc78a00904baa8b1e72c09f9d4889035037a17",
+      "tree": "550eab81350000d90c38069592a2593c8dfe0e3423c8d2a242c6669298f1762f",
       "dev_set": "85ad6d96fbf76ee64d9fb6339b3bf342b07128a2ebadc0a10f008c95dac01a48",
       "files": {
-        "filesystem/electrical__lv_cable_sizing__blind/output/submission.zip": "03ed21c8397642bd196c4e87edcda0249127b310"
+        "filesystem/electrical__lv_cable_sizing__blind/output/submission.zip": "2da9e9b2e43d0b25cabca75eaa8bc91b44c32954"
       },
       "final_message": "9fcc5b800ccfe601131197a36b291e6f07a22698",
       "deleted": [],
