@@ -880,6 +880,15 @@ class Agent:
         if left is None
         else min(FINISH_MARGIN_SEC, max(left, 0) / 4)
     )
+    user_prompt = self.session.instruction
+    if not self._is_quick_probe_task():
+      recon_report = await taskbridge.workspace_recon(self.session)
+      if recon_report:
+        user_prompt = (
+            f"{self.session.instruction}\n\n"
+            "## Automated Phase 1 Workspace Reconnaissance\n"
+            f"```text\n{recon_report}\n```"
+        )
     self.messages = [
         {
             "role": "system",
@@ -889,7 +898,7 @@ class Agent:
                 minutes=int(left / 60) if left else "unlimited",
             ),
         },
-        {"role": "user", "content": self.session.instruction},
+        {"role": "user", "content": user_prompt},
     ]
     # head: the text of an answer cut off at the output limit
     nudges, head = 0, ""
@@ -1726,7 +1735,13 @@ class Agent:
     if self._is_quick_probe_task() or self.fix_rounds_done >= self.max_fix_rounds:
       return None
     left = self.session.time_left()
-    if left is not None and left < max(self.finish_margin + 180, 300):
+    total_budget = float(self.session.limits.get("agent_timeout_sec") or 0)
+    min_verify_sec = (
+        max(self.finish_margin + 180, min(600.0, total_budget * self.verify_share))
+        if total_budget > 0
+        else max(self.finish_margin + 180, 300.0)
+    )
+    if left is not None and left < min_verify_sec:
       return None
     self.fix_rounds_done += 1
     await self.session.log(
@@ -1750,6 +1765,7 @@ class Agent:
         {"role": "user", "content": review_prompt},
     ]
     saved_msgs, saved_tools = self.messages, self.tools
+    saved_prompt_tokens = self.prompt_tokens
     try:
       self.messages = verifier_msgs
       self.tools = [t for t in saved_tools if t["function"]["name"] in ("bash", "read_file", "verify_calculations")]
@@ -1788,6 +1804,7 @@ class Agent:
       await self.session.log(f"Verification gate skipped on error: {exc}")
     finally:
       self.messages, self.tools = saved_msgs, saved_tools
+      self.prompt_tokens = saved_prompt_tokens
     return None
 
   def unread(self) -> list[dict[str, Any]]:

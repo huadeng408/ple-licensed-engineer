@@ -1,6 +1,6 @@
 # PLE Licensed-Engineer Agent Harness (`ple-licensed-engineer`)
 
-A multi-stage, verification-gated physical-engineering agent harness for **Physical-Engineering's Last Exam (PLE)**, designed around the benchmark's exact constraint-and-objective grading structure:
+A multi-stage, verification-gated physical-engineering agent harness for **Physical-Engineering's Last Exam (PLE)**, built atop Google's official `custom-openai` reference harness (`serve.py` / `taskbridge.py`) and tailored around the benchmark's exact constraint-and-objective grading structure:
 
 $$s = 0.4 \cdot p + 0.6 \cdot G \cdot O'$$
 
@@ -8,18 +8,20 @@ where $p \in [0, 1]$ is the fraction of general constraints met, $G \in \{0, 1\}
 
 ---
 
-## Architecture: 4-Phase Licensed-Engineer Workflow
+## Architecture: 4-Phase Licensed-Engineer Extensions over `custom-openai`
 
-1. **Phase 1 — Deliverable & Hard-Constraint Inventory**:
-   - Inspects `/app` and `/filesystem` workspaces, engineering reference drawings/specifications, and task-local MCP servers (`documents`, `spreadsheets`, `email`, `CAD`).
+While inheriting `custom-openai`'s Streamable-HTTP MCP transport (`connect_mcp()`), adaptive protocol fallback (`remedy()`), ephemeral cache breakpoint placement (`marked()`), and rolling conversation compaction (`compact()`), `ple-licensed-engineer` introduces four domain-specific extensions:
+
+1. **Phase 1 — Automated Workspace Reconnaissance (`taskbridge.workspace_recon()`) & $G$-First Basis of Design Register**:
+   - Executes a deterministic read-only container inventory of `/app` and `/filesystem` before the first LLM turn and injects the discovered file/tool map directly into the initial prompt, eliminating exploratory `bash`/`ls` turns.
    - Enumerates every required deliverable path, target format (`.ifc`, `.xlsx`, `.docx`, `.pdf`, `.zip`, `.py`, `.md`), Hard Constraints ($G$), Optimization Objective ($O'$), and SI vs. US Customary unit conversions.
-2. **Phase 2 — Deterministic Domain & Numerical Solver Execution**:
+2. **Phase 2 — Strictly Feasible Numerical Solver (`verify_calculations`)**:
    - Exposes a dedicated `verify_calculations` tool alongside `bash`, `read_file`, `write_file`, `edit_file`, and MCP tools (`<server>__<tool>`, `mcp_find`, `mcp_call`).
-   - Executes deterministic Python verification scripts (`numpy`, `scipy`, `sympy`, `pandas`, `ifcopenshell`, `openpyxl`, `python-docx`, `reportlab`) inside the task container to solve structural, civil, electrical, and mechanical equations before writing deliverables.
-3. **Phase 3 — Automated Container Deliverable & Archive Audit**:
+   - Executes deterministic Python verification scripts (`numpy`, `scipy`, `sympy`, `pandas`, `ifcopenshell`, `openpyxl`, `python-docx`, `reportlab`) inside `/tmp/_ple_verify_calc.py` with safety margin $\epsilon = 10^{-4}$ before writing deliverables.
+3. **Phase 3 — Automated Container Deliverable & Archive Gate (`taskbridge.audit_deliverables()`)**:
    - Runs `taskbridge.audit_deliverables()` inside the task container to verify that all candidate deliverables exist, are non-empty, pass ZIP integrity (`zipfile.testzip()`), and carry valid IFC (`ISO-10303-21`) or Office headers.
-4. **Phase 4 — Independent Fresh-Context Peer Review & Fix Loop**:
-   - Spawns an independent Verifier Agent in a clean context window containing only the task prompt, the Phase 3 container audit report, and the worker's proposed summary.
+4. **Phase 4 — Token-Isolated Fresh-Context Peer Review (`run_verification_gate()`)**:
+   - Reserves `VERIFY_SHARE = 0.22` of the task deadline budget and spawns an independent Verifier Agent in a clean context window containing only the task prompt, the Phase 3 container audit report, and the worker's proposed summary while preserving `self.prompt_tokens` across context swaps.
    - Re-checks key numbers, unit conversions, and hard constraints ($G=1$). Replies `PASS` or returns a numbered defect list for up to `MAX_FIX_ROUNDS = 2` targeted repair iterations.
 
 ---
