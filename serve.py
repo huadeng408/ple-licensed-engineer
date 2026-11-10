@@ -167,10 +167,13 @@ Your job is to audit the completed work against the task instructions and the PL
 1. Verify that every required deliverable file exists at the exact path asked for, is non-empty, and is a valid file \
 of the required format (.zip, .ifc, .xlsx, .docx, .pdf, .py, .md).
 2. Re-check key engineering calculations, unit conversions (SI vs Imperial), safety factors, and hard constraints \
-using read-only bash/python commands or read_file.
-3. If every deliverable is present, readable, and meets all hard constraints and task requirements, reply with the \
-single word PASS and nothing else.
-4. Otherwise, reply with a concise numbered list of concrete defects that must be fixed."""
+using read-only bash/python commands, verify_calculations, or read_file.
+3. When MCP tools (mcp_find, mcp_call, or <server>__<tool>) or /app/tools/.apps_data are present, inspect the MCP \
+world state (emails, tracking tickets, spreadsheets, documents, CAD) to verify that all required MCP side effects \
+and updates were completed accurately.
+4. If every deliverable and MCP state requirement is present, readable, and meets all hard constraints and task \
+requirements, reply with the single word PASS and nothing else.
+5. Otherwise, reply with a concise numbered list of concrete defects that must be fixed."""
 
 MCP_DIRECT = """
 
@@ -864,6 +867,7 @@ class Agent:
     self.fix_rounds_done = 0
     self.max_fix_rounds = int(os.environ.get("MAX_FIX_ROUNDS", "2"))
     self.verify_share = float(os.environ.get("VERIFY_SHARE", "0.22"))
+    self.mcp_prompt = ""
 
   async def run(self) -> str:
     """Runs the agent tool-calling loop until the task is complete.
@@ -872,6 +876,7 @@ class Agent:
       The final summary message produced by the agent.
     """
     mcp = await self.connect_mcp()
+    self.mcp_prompt = mcp
     left = self.session.time_left()
     # time kept for the final summary: FINISH_MARGIN_SEC, or a quarter of a
     # short task's time
@@ -943,6 +948,9 @@ class Agent:
           if gate_feedback:
             nudges, head = 0, ""
             self.messages.append({"role": "user", "content": gate_feedback})
+            self.prompt_tokens += len(gate_feedback) // 4
+            if self.prompt_tokens > self.compact_at():
+              await self.compact()
             continue
           return text or self.session.final_message
         nudges += 1  # only consecutive empty turns end the run
@@ -1760,16 +1768,23 @@ class Agent:
     verifier_msgs = [
         {
             "role": "system",
-            "content": VERIFIER_SYSTEM.format(workdir=self.session.workdir),
+            "content": VERIFIER_SYSTEM.format(workdir=self.session.workdir) + self.mcp_prompt,
         },
         {"role": "user", "content": review_prompt},
     ]
     saved_msgs, saved_tools = self.messages, self.tools
     saved_prompt_tokens = self.prompt_tokens
+    saved_max_output = self.max_output
     try:
       self.messages = verifier_msgs
-      self.tools = [t for t in saved_tools if t["function"]["name"] in ("bash", "read_file", "verify_calculations")]
-      for _ in range(6):
+      self.tools = [
+          t
+          for t in saved_tools
+          if t["function"]["name"]
+          in ("bash", "read_file", "verify_calculations", "mcp_find", "mcp_call")
+          or t["function"]["name"] in self.mcp
+      ]
+      for step in range(6):
         v_left = self.session.time_left()
         if v_left is not None and v_left < self.finish_margin + 120:
           return None
@@ -1800,11 +1815,40 @@ class Agent:
           self.messages.append(
               {"role": "tool", "tool_call_id": call["id"], "content": res}
           )
+        if step == 5:
+          v_left = self.session.time_left()
+          if v_left is not None and v_left < self.finish_margin + 90:
+            return None
+          self.messages.append({
+              "role": "user",
+              "content": (
+                  "Tool budget reached. Based on the evidence gathered above, "
+                  "provide your immediate final verdict now: reply with the "
+                  "single word PASS if all deliverables and hard constraints "
+                  "(G=1) hold, or FAIL: followed by the numbered list of "
+                  "concrete defects."
+              ),
+          })
+          final_v_reply = await self.complete(
+              tool_choice="none", reserve=self.finish_margin + 60
+          )
+          verdict = visible(final_v_reply.text).strip()
+          await self.session.log(f"Verifier forced verdict: {verdict[:600]}")
+          if verdict.strip("*_. \r\n\t").upper() in ("", "PASS"):
+            return None
+          return (
+              "## Phase 4 Independent Licensed-Engineer Verification Found Gaps\n"
+              f"{verdict}\n\n"
+              f"Container Deliverable Audit:\n{audit_report}\n\n"
+              "Fix every gap above, verify the updated deliverable files on disk, "
+              "and then provide your updated final engineering summary."
+          )
     except Exception as exc:  # pylint: disable=broad-exception-caught
       await self.session.log(f"Verification gate skipped on error: {exc}")
     finally:
       self.messages, self.tools = saved_msgs, saved_tools
       self.prompt_tokens = saved_prompt_tokens
+      self.max_output = saved_max_output
     return None
 
   def unread(self) -> list[dict[str, Any]]:

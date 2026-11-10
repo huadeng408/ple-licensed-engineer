@@ -1534,14 +1534,48 @@ async def _stop(proc: Any) -> None:
 
 RECON_SCRIPT = r"""
 import os, sys, pathlib
-roots = [p for p in ["/app", "/filesystem"] if os.path.exists(p)]
+
+env_roots = os.environ.get("PLE_CONTAINER_ROOTS")
+if env_roots:
+    candidate_roots = [p for p in env_roots.split(os.pathsep) if p and os.path.exists(p)]
+else:
+    candidate_roots = [
+        p for p in [
+            os.getcwd(),
+            "/app/files",
+            "/app/output",
+            "/filesystem",
+            "/app/tools/.apps_data",
+            "/app",
+        ]
+        if os.path.exists(p)
+    ]
+
+SKIP_DIRS = {"__pycache__", ".git", "node_modules", ".venv", "venv", "site-packages"}
 print("=== WORKSPACE DIRECTORY SNAPSHOT ===")
-for r in roots:
+seen_files = set()
+for r in candidate_roots:
+    r_norm = os.path.abspath(r).replace("\\", "/")
     count = 0
     for dirpath, dirnames, filenames in os.walk(r):
-        dirnames[:] = [d for d in sorted(dirnames) if d not in ("__pycache__", ".git", "node_modules", ".venv")]
+        dp_norm = os.path.abspath(dirpath).replace("\\", "/")
+        filtered_dirs = []
+        for d in sorted(dirnames):
+            if d in SKIP_DIRS:
+                continue
+            child_norm = f"{dp_norm.rstrip('/')}/{d}"
+            if (child_norm == "/app/tools" or child_norm.endswith("/app/tools")) and not r_norm.endswith("/.apps_data"):
+                continue
+            filtered_dirs.append(d)
+        dirnames[:] = filtered_dirs
         for f in sorted(filenames):
             fp = os.path.join(dirpath, f)
+            fp_norm = os.path.abspath(fp).replace("\\", "/")
+            if fp_norm in seen_files:
+                continue
+            if "/app/tools/" in fp_norm and "/app/tools/.apps_data/" not in fp_norm:
+                continue
+            seen_files.add(fp_norm)
             try:
                 sz = os.path.getsize(fp)
             except OSError:
@@ -1556,41 +1590,117 @@ for r in roots:
 """
 
 AUDIT_SCRIPT = r"""
-import os, sys, zipfile, json, pathlib
-roots = [p for p in ["/app", "/filesystem"] if os.path.exists(p)]
+import os, sys, time, zipfile, json, pathlib, re
+
+env_roots = os.environ.get("PLE_CONTAINER_ROOTS")
+if env_roots:
+    roots = [p for p in env_roots.split(os.pathsep) if p and os.path.exists(p)]
+else:
+    roots = [p for p in ["/filesystem", "/app/output", "/app/files", "/app/tools/.apps_data", "/app"] if os.path.exists(p)]
+
+SKIP_DIRS = {"__pycache__", ".git", "node_modules", ".venv", "venv", "site-packages"}
+KEYWORDS = (
+    "output", "submission", "deliverable", ".apps_data",
+    ".ifc", ".xlsx", ".docx", ".pdf", ".zip", "solution.py", "memo", "report", ".json", ".md", ".csv"
+)
 print("=== DELIVERABLE & ARCHIVE INTEGRITY AUDIT ===")
 found = []
+seen = set()
+now = time.time()
+
 for r in roots:
+    r_norm = os.path.abspath(r).replace("\\", "/")
     for dirpath, dirnames, filenames in os.walk(r):
-        dirnames[:] = [d for d in sorted(dirnames) if d not in ("__pycache__", ".git", "node_modules", ".venv")]
+        dp_norm = os.path.abspath(dirpath).replace("\\", "/")
+        filtered_dirs = []
+        for d in sorted(dirnames):
+            if d in SKIP_DIRS:
+                continue
+            child_norm = f"{dp_norm.rstrip('/')}/{d}"
+            if (child_norm == "/app/tools" or child_norm.endswith("/app/tools")) and not r_norm.endswith("/.apps_data"):
+                continue
+            filtered_dirs.append(d)
+        dirnames[:] = filtered_dirs
         for f in sorted(filenames):
             fp = os.path.join(dirpath, f)
-            if any(k in fp.lower() for k in ("output", "submission", "deliverable", ".ifc", ".xlsx", ".docx", ".pdf", ".zip", "solution.py", "memo", "report")):
+            fp_norm = os.path.abspath(fp).replace("\\", "/")
+            if fp_norm in seen:
+                continue
+            if "/app/tools/" in fp_norm and "/app/tools/.apps_data/" not in fp_norm:
+                continue
+            seen.add(fp_norm)
+            low = fp_norm.lower()
+            if any(k in low for k in KEYWORDS):
                 try:
                     st = os.stat(fp)
-                    found.append((fp, st.st_size, st.st_mtime))
+                    is_high_prio = any(
+                        p in low
+                        for p in ("/output/", "/submission/", "/deliverable/", "/.apps_data/", "submission.zip", "model.ifc", "solution.py")
+                    )
+                    is_mid_prio = ("/filesystem/" in low) or ((now - st.st_mtime) < 7200)
+                    tier = 0 if is_high_prio else (1 if is_mid_prio else 2)
+                    found.append((tier, -st.st_mtime, fp, st.st_size, st.st_mtime))
                 except OSError:
                     pass
-for fp, sz, mtime in sorted(found)[:80]:
+
+found.sort(key=lambda item: (item[0], item[1], item[2]))
+for tier, _neg_mtime, fp, sz, mtime in found[:150]:
     status = "OK" if sz > 0 else "EMPTY_FILE_WARNING"
     extra = ""
-    if fp.endswith(".zip") and sz > 0:
+    low = fp.lower()
+    if low.endswith(".zip") and sz > 0:
         try:
             with zipfile.ZipFile(fp, "r") as zf:
                 bad = zf.testzip()
-                names = zf.namelist()
-                extra = f" [ZIP valid={bad is None}, entries={len(names)}: {names[:8]}]"
+                infos = [zi for zi in zf.infolist() if not zi.is_dir()]
+                names = [zi.filename for zi in infos]
+                empty_members = [zi.filename for zi in infos if zi.file_size == 0]
+                if bad is not None:
+                    status = f"CORRUPT_ZIP_ENTRY({bad})"
+                elif not names:
+                    status = "EMPTY_ZIP_ARCHIVE"
+                elif empty_members:
+                    status = f"ZIP_EMPTY_MEMBER({empty_members[:3]})"
+                extra = f" [ZIP valid={bad is None}, files={len(names)}: {names[:10]}]"
         except Exception as e:
             status = f"CORRUPT_ZIP({e})"
-    elif fp.endswith(".ifc") and sz > 0:
+    elif low.endswith(".ifc") and sz > 0:
         try:
             with open(fp, "rb") as fh:
-                head = fh.read(256).decode("utf-8", "replace")
-            if "ISO-10303-21" not in head:
+                raw = fh.read(65536).decode("utf-8", "replace")
+            if "ISO-10303-21" not in raw[:512]:
                 status = "INVALID_IFC_HEADER"
+            elif re.search(r"IFC(?:CARTESIANPOINT|POLYLINE|DIRECTION|EXTRUDEDAREASOLID)\s*\([^;]*\$\s*\)", raw, re.I):
+                status = "DEGENERATE_IFC_GEOMETRY_NULL_ATTR"
+            elif "IFCPROJECT" not in raw.upper():
+                status = "INCOMPLETE_IFC_SCHEMA"
         except Exception:
             pass
-    print(f"- {fp}: {sz} bytes [{status}]{extra}")
+    elif (low.endswith(".xlsx") or low.endswith(".docx")) and sz > 0:
+        try:
+            if not zipfile.is_zipfile(fp):
+                status = "INVALID_OPENXML_ARCHIVE"
+        except Exception:
+            status = "INVALID_OPENXML_ARCHIVE"
+    elif low.endswith(".pdf") and sz > 0:
+        try:
+            with open(fp, "rb") as fh:
+                head = fh.read(8)
+            if not head.startswith(b"%PDF-"):
+                status = "INVALID_PDF_HEADER"
+        except Exception:
+            pass
+    elif low.endswith(".json") and (".apps_data" in low or "/output/" in low.replace("\\", "/")) and sz > 0:
+        try:
+            with open(fp, "rb") as fh:
+                data = json.loads(fh.read(262144).decode("utf-8", "replace"))
+            if isinstance(data, dict):
+                extra = f" [JSON keys={list(data.keys())[:8]}]"
+            elif isinstance(data, list):
+                extra = f" [JSON list len={len(data)}]"
+        except Exception as e:
+            status = f"INVALID_JSON({e})"
+    print(f"- [T{tier}] {fp}: {sz} bytes [{status}]{extra}")
 if not found:
     print("WARNING: No candidate deliverable files found yet under /app or /filesystem.")
 """

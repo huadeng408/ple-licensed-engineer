@@ -13,32 +13,31 @@ where $p \in [0, 1]$ is the fraction of general constraints met, $G \in \{0, 1\}
 While inheriting `custom-openai`'s Streamable-HTTP MCP transport (`connect_mcp()`), adaptive protocol fallback (`remedy()`), ephemeral cache breakpoint placement (`marked()`), and rolling conversation compaction (`compact()`), `ple-licensed-engineer` introduces four domain-specific extensions:
 
 1. **Phase 1 — Automated Workspace Reconnaissance (`taskbridge.workspace_recon()`) & $G$-First Basis of Design Register**:
-   - Executes a deterministic read-only container inventory of `/app` and `/filesystem` before the first LLM turn and injects the discovered file/tool map directly into the initial prompt, eliminating exploratory `bash`/`ls` turns.
+   - Executes a deterministic read-only container inventory of `session.workdir`, `/app/files`, `/app/output`, `/filesystem`, and `/app/tools/.apps_data` (excluding internal `/app/tools` MCP server packages) before the first LLM turn and injects the discovered file/tool map directly into the initial prompt, eliminating exploratory `bash`/`ls` turns.
    - Enumerates every required deliverable path, target format (`.ifc`, `.xlsx`, `.docx`, `.pdf`, `.zip`, `.py`, `.md`), Hard Constraints ($G$), Optimization Objective ($O'$), and SI vs. US Customary unit conversions.
 2. **Phase 2 — Strictly Feasible Numerical Solver (`verify_calculations`)**:
    - Exposes a dedicated `verify_calculations` tool alongside `bash`, `read_file`, `write_file`, `edit_file`, and MCP tools (`<server>__<tool>`, `mcp_find`, `mcp_call`).
    - Executes deterministic Python verification scripts (`numpy`, `scipy`, `sympy`, `pandas`, `ifcopenshell`, `openpyxl`, `python-docx`, `reportlab`) inside `/tmp/_ple_verify_calc.py` with safety margin $\epsilon = 10^{-4}$ before writing deliverables.
-3. **Phase 3 — Automated Container Deliverable & Archive Gate (`taskbridge.audit_deliverables()`)**:
-   - Runs `taskbridge.audit_deliverables()` inside the task container to verify that all candidate deliverables exist, are non-empty, pass ZIP integrity (`zipfile.testzip()`), and carry valid IFC (`ISO-10303-21`) or Office headers.
-4. **Phase 4 — Token-Isolated Fresh-Context Peer Review (`run_verification_gate()`)**:
-   - Reserves `VERIFY_SHARE = 0.22` of the task deadline budget and spawns an independent Verifier Agent in a clean context window containing only the task prompt, the Phase 3 container audit report, and the worker's proposed summary while preserving `self.prompt_tokens` across context swaps.
-   - Re-checks key numbers, unit conversions, and hard constraints ($G=1$). Replies `PASS` or returns a numbered defect list for up to `MAX_FIX_ROUNDS = 2` targeted repair iterations.
+3. **Phase 3 — Tier-Prioritized Container Deliverable & Archive Gate (`taskbridge.audit_deliverables()`)**:
+   - Runs `taskbridge.audit_deliverables()` inside the task container, prioritizing `/output/`, `/submission/`, and `.apps_data` deliverables at Tier 0 by modification time so target packages such as `/filesystem/.../output/submission.zip` are never truncated behind pre-existing reference files.
+   - Verifies non-zero byte sizes, ZIP archive integrity (`zipfile.testzip()` and zero-byte member detection), IFC4 `ISO-10303-21` headers and non-null `$` geometry attributes, OpenXML (`.xlsx`/`.docx`) container validity, and PDF headers.
+4. **Phase 4 — MCP-Aware, Token-Isolated Fresh-Context Peer Review (`run_verification_gate()`)**:
+   - Reserves `VERIFY_SHARE = 0.22` of the task deadline budget and spawns an independent Verifier Agent in a clean context window containing only the task prompt, the Phase 3 container audit report, and the worker's proposed summary while preserving `self.prompt_tokens` and `self.max_output` across context swaps and checking `compact()` immediately after injecting repair feedback.
+   - Retains all read-only, solver, and MCP inspection tools (`bash`, `read_file`, `verify_calculations`, `mcp_find`, `mcp_call`, and `<server>__<tool>`), forces a deterministic final verdict if all 6 verification turns invoke tools, and triggers up to `MAX_FIX_ROUNDS = 2` targeted repair iterations when defects are found.
 
 ---
 
 ## Local Verification & Evaluation
 
 ```bash
-# 1. Start the local model proxy (listening on 0.0.0.0:4000)
-python ../local_model_proxy.py &
-export MODEL_PROXY_URL=http://localhost:4000
-export MODEL_PROXY_KEY=ple-local-key
+# 1. Validate submission.yaml and harness layout
+python -m kit validate ../competitions/ple/ple-harness
 
 # 2. Run kit check against ple-harness
-uv run python -m kit check ../competitions/ple/ple-harness
+python -m kit check ../competitions/ple/ple-harness
 
-# 3. Run dev-set evaluation
-uv run python eval/run.py ../competitions/ple/ple-harness
+# 3. Run dev-set evaluation (Stage 2 / GCP credit grant)
+python eval/run.py ../competitions/ple/ple-harness
 ```
 
 ## License
