@@ -1552,7 +1552,15 @@ else:
         if os.path.exists(p)
     ]
 
-SKIP_DIRS = {"__pycache__", ".git", "node_modules", ".venv", "venv", "site-packages"}
+SKIP_DIRS = {
+    "__pycache__",
+    ".git",
+    "node_modules",
+    ".venv",
+    "venv",
+    "site-packages",
+    "_ple_incumbent_best",
+}
 print("=== WORKSPACE DIRECTORY & SCHEMA SNAPSHOT ===")
 seen_files = set()
 for r in candidate_roots:
@@ -1633,16 +1641,27 @@ else:
         if os.path.exists(p)
     ]
 
-SKIP_DIRS = {"__pycache__", ".git", "node_modules", ".venv", "venv", "site-packages"}
+SKIP_DIRS = {
+    "__pycache__",
+    ".git",
+    "node_modules",
+    ".venv",
+    "venv",
+    "site-packages",
+    "_ple_incumbent_best",
+}
 KEYWORDS = (
     "output", "submission", "deliverable", "/files/", ".apps_data",
     ".ifc", ".dxf", ".dwg", ".inp", ".xlsx", ".docx", ".pdf", ".zip",
     "solution.py", ".py", "memo", "report", ".json", ".yaml", ".yml", ".md", ".csv"
 )
 
-def inspect_openxml_bytes(raw_bytes, ext_low):
+MAX_AUDIT_BYTES = 67108864  # 64 MiB full-file audit ceiling (eliminates 256 KB CAD/BIM truncation)
+
+def inspect_openxml_source(src, ext_low):
     try:
-        with zipfile.ZipFile(io.BytesIO(raw_bytes), "r") as zf:
+        zf_obj = zipfile.ZipFile(io.BytesIO(src), "r") if isinstance(src, (bytes, bytearray)) else zipfile.ZipFile(src, "r")
+        with zf_obj as zf:
             names = set(zf.namelist())
             if "[Content_Types].xml" not in names:
                 return "INVALID_OPENXML_NO_CONTENT_TYPES"
@@ -1659,19 +1678,22 @@ def inspect_openxml_bytes(raw_bytes, ext_low):
     except Exception:
         return "INVALID_OPENXML_ARCHIVE"
 
-def inspect_ifc_text(raw_text):
+def inspect_ifc_text(raw_text, truncated=False):
     if "ISO-10303-21" not in raw_text[:512]:
         return "INVALID_IFC_HEADER"
-    if re.search(r"IFC(?:CARTESIANPOINT|POLYLINE|DIRECTION|EXTRUDEDAREASOLID)\s*\([^;]*\$\s*\)", raw_text, re.I):
+    # Strip STEP quoted literals ('...''...') before scanning geometry or #id references
+    scrubbed = re.sub(r"'(?:''|[^'])*'", "''", raw_text)
+    if re.search(r"IFC(?:CARTESIANPOINT|POLYLINE|DIRECTION|EXTRUDEDAREASOLID)\s*\([^;]*\$\s*\)", scrubbed, re.I):
         return "DEGENERATE_IFC_GEOMETRY_NULL_ATTR"
-    if "IFCPROJECT" not in raw_text.upper():
+    if "IFCPROJECT" not in scrubbed.upper():
         return "INCOMPLETE_IFC_SCHEMA"
-    defined_ids = set(re.findall(r"#(\d+)\s*=", raw_text))
-    rhs_chunks = re.findall(r"=\s*[^;]+;", raw_text)
-    referenced_ids = set(re.findall(r"#(\d+)", " ".join(rhs_chunks)))
-    dangling = sorted(referenced_ids - defined_ids, key=lambda x: int(x))
-    if dangling:
-        return f"DANGLING_IFC_ENTITY_REFS(#{',#'.join(dangling[:5])})"
+    if not truncated:
+        defined_ids = set(re.findall(r"#(\d+)\s*=", scrubbed))
+        rhs_chunks = re.findall(r"=\s*[^;]+;", scrubbed)
+        referenced_ids = set(re.findall(r"#(\d+)", " ".join(rhs_chunks)))
+        dangling = sorted(referenced_ids - defined_ids, key=lambda x: int(x))
+        if dangling:
+            return f"DANGLING_IFC_ENTITY_REFS(#{',#'.join(dangling[:5])})"
     return "OK"
 
 def inspect_dxf_text(raw_text):
@@ -1738,16 +1760,16 @@ for tier, _neg_mtime, fp, sz, mtime in found[:160]:
                 names = [zi.filename for zi in infos]
                 empty_members = [zi.filename for zi in infos if zi.file_size == 0]
                 member_defects = []
-                for zi in infos[:30]:
+                for zi in infos:
                     m_low = zi.filename.lower()
-                    if zi.file_size > 0 and zi.file_size <= 8388608:
+                    if zi.file_size > 0 and zi.file_size <= MAX_AUDIT_BYTES:
                         m_bytes = zf.read(zi.filename)
                         if m_low.endswith((".xlsx", ".docx")):
-                            st_m = inspect_openxml_bytes(m_bytes, m_low)
+                            st_m = inspect_openxml_source(m_bytes, m_low)
                             if st_m != "OK":
                                 member_defects.append(f"{zi.filename}:{st_m}")
                         elif m_low.endswith(".ifc"):
-                            st_m = inspect_ifc_text(m_bytes.decode("utf-8", "replace"))
+                            st_m = inspect_ifc_text(m_bytes.decode("utf-8", "replace"), truncated=False)
                             if st_m != "OK":
                                 member_defects.append(f"{zi.filename}:{st_m}")
                         elif m_low.endswith(".dxf"):
@@ -1770,21 +1792,27 @@ for tier, _neg_mtime, fp, sz, mtime in found[:160]:
     elif low.endswith(".ifc") and sz > 0:
         try:
             with open(fp, "rb") as fh:
-                raw = fh.read(262144).decode("utf-8", "replace")
-            status = inspect_ifc_text(raw)
+                raw = fh.read(MAX_AUDIT_BYTES).decode("utf-8", "replace")
+            status = inspect_ifc_text(raw, truncated=(sz > MAX_AUDIT_BYTES))
         except Exception:
             pass
     elif low.endswith(".dxf") and sz > 0:
         try:
-            with open(fp, "rb") as fh:
-                raw = fh.read(262144).decode("utf-8", "replace")
+            if sz <= MAX_AUDIT_BYTES:
+                with open(fp, "rb") as fh:
+                    raw = fh.read(MAX_AUDIT_BYTES).decode("utf-8", "replace")
+            else:
+                with open(fp, "rb") as fh:
+                    head_b = fh.read(1048576)
+                    fh.seek(max(0, sz - 1048576))
+                    tail_b = fh.read(1048576)
+                raw = (head_b + b"\n" + tail_b).decode("utf-8", "replace")
             status = inspect_dxf_text(raw)
         except Exception:
             pass
     elif (low.endswith(".xlsx") or low.endswith(".docx")) and sz > 0:
         try:
-            with open(fp, "rb") as fh:
-                status = inspect_openxml_bytes(fh.read(4194304), low)
+            status = inspect_openxml_source(fp, low)
         except Exception:
             status = "INVALID_OPENXML_ARCHIVE"
     elif low.endswith(".pdf") and sz > 0:
@@ -1796,18 +1824,19 @@ for tier, _neg_mtime, fp, sz, mtime in found[:160]:
         except Exception:
             pass
     elif low.endswith(".json") and (".apps_data" in low or "/output/" in low.replace("\\", "/") or "/files/" in low.replace("\\", "/")) and sz > 0:
-        try:
-            with open(fp, "rb") as fh:
-                txt = fh.read(262144).decode("utf-8", "replace")
-                data = json.loads(txt)
-            if re.search(r"\b(?:NaN|Infinity|-Infinity)\b", txt):
-                status = "JSON_NONFINITE_VALUE_WARNING"
-            if isinstance(data, dict):
-                extra = f" [JSON keys={list(data.keys())[:8]}]"
-            elif isinstance(data, list):
-                extra = f" [JSON list len={len(data)}]"
-        except Exception as e:
-            status = f"INVALID_JSON({e})"
+        if sz <= MAX_AUDIT_BYTES:
+            try:
+                with open(fp, "rb") as fh:
+                    txt = fh.read(MAX_AUDIT_BYTES).decode("utf-8", "replace")
+                    data = json.loads(txt)
+                if re.search(r"\b(?:NaN|Infinity|-Infinity)\b", txt):
+                    status = "JSON_NONFINITE_VALUE_WARNING"
+                if isinstance(data, dict):
+                    extra = f" [JSON keys={list(data.keys())[:8]}]"
+                elif isinstance(data, list):
+                    extra = f" [JSON list len={len(data)}]"
+            except Exception as e:
+                status = f"INVALID_JSON({e})"
     print(f"- [T{tier}] {fp}: {sz} bytes [{status}]{extra}")
 if not found:
     print("WARNING: No candidate deliverable files found yet under /app or /filesystem.")

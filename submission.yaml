@@ -13,14 +13,13 @@
 # limitations under the License.
 
 name: ple-licensed-engineer
-model_api: google-cloud/claude-opus-5-5
+model_api: google-cloud/gemma-4-26b
 install: >-
   uv venv --python 3.12 /opt/harness/venv
   && uv pip install --python /opt/harness/venv/bin/python -r {src}/requirements.txt
 serve: /opt/harness/venv/bin/python {src}/serve.py
 env:
   MAX_OUTPUT_TOKENS: "32000"
-  COMPACT_AT_TOKENS: "150000"
-  REASONING_EFFORT: "max"
+  COMPACT_AT_TOKENS: "96000"
   VERIFY_SHARE: "0.22"
   MAX_FIX_ROUNDS: "2"
